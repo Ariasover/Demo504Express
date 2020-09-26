@@ -36,8 +36,8 @@
                         504
                     </div>
                 </li>
-                <li class="active">
-                    <a href="index.html"><i class="fa fa-whatsapp"></i> <span class="nav-label">Envío de mensajes</span></a>
+                <li>
+                    <a href="mensajes.html"><i class="fa fa-whatsapp"></i> <span class="nav-label">Envío de mensajes</span></a>
                 </li>
                 <li>
                     <a href="configuracion.html"><i class="fa fa-cog"></i> <span class="nav-label">Configuración</span> </a>
@@ -73,55 +73,120 @@
                 <div class="col-lg-12">
                     <div class="ibox">
                         <div class="ibox-title">
-                            {% comment %} <h5>Arrastre su archivo de Excel</h5> {% endcomment %}
                         </div>
                         <div class="ibox-content">
-
-                            <p>
-                                <strong>Dropzone.js</strong> is a light weight JavaScript library that turns an HTML element into a dropzone. This means that a user can drag and drop a file onto it, and the file gets uploaded to the server via AJAX.
-                            </p>
-
                             <form action="#" class="dropzone dz-clickable" id="dropzoneForm">
                                 
-                            <div class="dz-default dz-message"><span><strong>Drop files here or click to upload. </strong><br> (This is just a demo dropzone. Selected files are not actually uploaded.)</span></div></form>
+                            <div class="dz-default dz-message text-center"><span><strong>Arrastre y suelte el archivo de Excel</span></div></form>
 
-                            <p class="m-t-xs">
-                                HTML markup code for abowe example:
-                            </p>
-<textarea id="code3" style="display: none;">&lt;form action="#" class="dropzone" id="dropzoneForm"&gt;
-    &lt;div class="fallback"&gt;
-        &lt;input name="file" type="file" multiple /&gt;
-    &lt;/div&gt;
-&lt;/form&gt; </textarea><div class="CodeMirror cm-s-default "><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 5px; left: 34px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" style="position: absolute; padding: 0px; width: 1000px; height: 1em; outline: none;" tabindex="0"></textarea></div><div class="CodeMirror-hscrollbar" style="left: 29px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 29px; min-width: 412.797px; min-height: 73px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre>x</pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"><div class="CodeMirror-selected" style="position: absolute; left: 4px; top: 0px; width: 916px; height: 13px;"></div><div class="CodeMirror-selected" style="position: absolute; left: 4px; top: 52px; width: 62.4531px; height: 13px;"></div><div class="CodeMirror-selected" style="position: absolute; left: 4px; top: 13px; width: 916px; height: 39px;"></div></div><div class="CodeMirror-cursors" style=""></div><div class="CodeMirror-code" style=""><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">1</div></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">form</span> <span class="cm-attribute">action</span>=<span class="cm-string">"#"</span> <span class="cm-attribute">class</span>=<span class="cm-string">"dropzone"</span> <span class="cm-attribute">id</span>=<span class="cm-string">"dropzoneForm"</span><span class="cm-tag cm-bracket">&gt;</span></span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">2</div></div><pre class=""><span style="padding-right: 0.1px;">    <span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">div</span> <span class="cm-attribute">class</span>=<span class="cm-string">"fallback"</span><span class="cm-tag cm-bracket">&gt;</span></span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">3</div></div><pre class=""><span style="padding-right: 0.1px;">        <span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">input</span> <span class="cm-attribute">name</span>=<span class="cm-string">"file"</span> <span class="cm-attribute">type</span>=<span class="cm-string">"file"</span> <span class="cm-attribute">multiple</span> <span class="cm-tag cm-bracket cm-error">/&gt;</span></span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">4</div></div><pre class=""><span style="padding-right: 0.1px;">    <span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">div</span><span class="cm-tag cm-bracket">&gt;</span></span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">5</div></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">form</span><span class="cm-tag cm-bracket">&gt;</span> </span></pre></div></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 73px;"></div><div class="CodeMirror-gutters" style="height: 73px;"><div class="CodeMirror-gutter CodeMirror-linenumbers" style="width: 28px;"></div></div></div></div>
-                            <p class="m-t-xs">All avalible options and full documentation you can find: <a href="http://www.dropzonejs.com/#configuration-options">http://www.dropzonejs.com/#configuration-options</a> </p>
+                           
+                        </div>
+                        <div class="text-center">
+                            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" >Enviar mensajes</button>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="text-center m-t-lg">
-                        <h1>
-                            Bienvenido a 504 Express Charge 
-                        </h1>
-                        <small>
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>Enviados hoy | 25/09/2020</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                    <i class="fa fa-wrench"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-user">
+                                    <li><a href="#">Config option 1</a>
+                                    </li>
+                                    <li><a href="#">Config option 2</a>
+                                    </li>
+                                </ul>
+                                <a class="close-link">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
                             
-                        </small>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nombre</th>
+                                    <th>Teléfono</th>
+                                    <th>Enviado</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Cristhian Amador</td>
+                                    <td>99339933</td>
+                                    <td><i class="fa fa-check text-navy"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Alejandro Portillo</td>
+                                    <td>88994499</td>
+                                    <td><i class="fa fa-check text-navy"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Glenda Fúnez</td>
+                                    <td>84488550</td>
+                                    <td><i class="fa fa-check text-navy"></i></td>
+                                </tr>
+                                </tbody>
+                            </table>
+    
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="footer">
-            <div class="pull-right">
-                10GB of <strong>250GB</strong> Free.
-            </div>
+           
             <div>
-                <strong>Copyright</strong> Example Company &copy; 2014-2017
+                <strong>Copyright</strong> 504 Express &copy; 2020
             </div>
         </div>
 
     </div>
 </div>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+  
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Se enviaran mensajes por whatsapp...</h4>
+        </div>
+        <div class="modal-body">
+          <p style="text-align: center;">El proceso tardará un poco, no cerrar la ventana</p>
+          <div class="spiner-example">
+            <div class="sk-spinner sk-spinner-wave">
+                <div class="sk-rect1"></div>
+                <div class="sk-rect2"></div>
+                <div class="sk-rect3"></div>
+                <div class="sk-rect4"></div>
+                <div class="sk-rect5"></div>
+            </div>
+        </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+  
+    </div>
+  </div>
 
 <!-- Mainly scripts -->
 <script src="js/jquery-3.1.1.min.js"></script>
