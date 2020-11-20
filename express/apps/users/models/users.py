@@ -12,7 +12,6 @@ from apps.utils.models import HistoryModel
 
 class Profile(HistoryModel,models.Model):
     id_profile = models.AutoField(db_column='IdProfile', primary_key=True)
-
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     
