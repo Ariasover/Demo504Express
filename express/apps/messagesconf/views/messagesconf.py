@@ -40,9 +40,9 @@ class DashboardView(ListView):
 	paginate_by = 5
 	no_of_message = 1
 	def initalize(self):
-    		
+			
 		message_text = '*Prueba 3, automatizacion de Whatsapp por medio de Python*'
-		# message_text = MessagesConfiguration.objects.last().text
+		message_text = MessagesConfiguration.objects.last().text
 		# no_of_message = 1  # no. de tiempo desea que el mensaje sea enviado
 		# lista de números de teléfono puede ser de cualquier longitud
 		# Puedes agregar a la lista mas de un numero ejem  [573024508559,num2,num3,num4]
@@ -87,7 +87,7 @@ class DashboardView(ListView):
 			# SEND MESSAGES
 			self.initalize()
 		elif request.POST['options'] == 'excel':
-    		print('elegi excel')
+			print('elegi excel')
 		else:
 			person_resource = MessagesListResource()
 			dataset = Dataset()
@@ -111,11 +111,11 @@ class DashboardView(ListView):
 		quantity_sent= len(sent_messages)
 
 		context.update({
-            'sent_messages': sent_messages[:5],
-            'not_sent_messages': not_sent_messages,
+			'sent_messages': sent_messages[:5],
+			'not_sent_messages': not_sent_messages,
 			'quantity_not_sent':quantity_not_sent,
 		 	'quantity_sent':quantity_sent
-        })		
+		})		
 		return context
 
 
