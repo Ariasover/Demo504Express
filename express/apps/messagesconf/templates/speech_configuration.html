@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="text-center m-t-lg">
+				<h1>
+					Dashboard mensajes 
+				</h1>
+			   
+			</div>
+		</div>
+	</div>
+
+    <div class="row">
+        <div class="col-lg-6">
+			<div class="ibox-title">
+				<h5></h5>
+				<div class="ibox-tools">
+					
+				</div>
+			</div>
+			<div class="ibox-content">
+				<form method="post" enctype="multipart/form-data">
+					{% csrf_token %}
+					<input type="file" name="myfile">
+					<input type="hidden" name="options" value="excel">
+					<br>
+					<button type="submit">Subir archivo</button>
+				</form>
+			</div>
+					
+		</div>
+
+    </div>
+	
+{% endblock %}
