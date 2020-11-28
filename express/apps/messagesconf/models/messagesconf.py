@@ -19,21 +19,23 @@ class MessagesList(HistoryModel,models.Model):
 	creation_user = models.ForeignKey(User, models.DO_NOTHING, db_column='CreationUser',related_name='creation_user')
 	modification_user = models.ForeignKey(User, models.DO_NOTHING, db_column='ModificationUser',related_name='modification_user')
 	
+class ConfigurationType(HistoryModel,models.Model):
+	id_configuration_type= models.AutoField(db_column='IdConfigurationType', primary_key=True)
+	title = models.CharField(db_column='Title', max_length=50, blank=True, null=True)
+	creation_user = models.ForeignKey(User, models.DO_NOTHING, db_column='CreationUser',related_name='ct_creation_user')
+	modification_user = models.ForeignKey(User, models.DO_NOTHING, db_column='ModificationUser',related_name='ct_modification_user')
+
+
 class MessagesConfiguration(HistoryModel,models.Model):
 	id_message_configuration = models.AutoField(db_column='IdMessageConfiguration', primary_key=True)
 	name = models.CharField(db_column='Name', max_length=50, blank=True, null=True)
 	text = models.TextField(db_column='Text', blank=True, null=True)
 	value = models.IntegerField(db_column='Value', blank=True, null=True)
+	configuration_type = models.ForeignKey(ConfigurationType, models.DO_NOTHING, db_column='ConfigurationType')
 	creation_user = models.ForeignKey(User, models.DO_NOTHING, db_column='CreationUser',related_name='mc_creation_user')
 	modification_user = models.ForeignKey(User, models.DO_NOTHING, db_column='ModificationUser',related_name='mc_modification_user')
 	
-# class MessagesCampaign(HistoryModel,models.Model):
-# 	id_message_campaign= models.AutoField(db_column='IdMessageCampaign', primary_key=True)
-# 	name = models.TextField(db_column='Name', blank=True, null=True)
-# 	id_message_configuration = models.ForeignKey(MessagesConfiguration, models.DO_NOTHING, db_column='IdMessageConfiguration')
-# 	creation_user = models.ForeignKey(User, models.DO_NOTHING, db_column='CreationUser',related_name='mca_creation_user')
-# 	modification_user = models.ForeignKey(User, models.DO_NOTHING, db_column='ModificationUser',related_name='mca_modification_user')
 
 # admin.site.register(MessagesList)
 admin.site.register(MessagesConfiguration)
-# admin.site.register(MessagesCampaign)
+admin.site.register(ConfigurationType)
