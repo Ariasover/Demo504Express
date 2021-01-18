@@ -1,0 +1,129 @@
+{% load static %}
+{% load auth_extras %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>504 Express</title>
+
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'font-awesome/css/font-awesome.css' %}" rel="stylesheet">
+
+    <link href="{% static 'css/animate.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div id="wrapper">
+
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <div class="sidebar-collapse">
+            <ul class="nav metismenu" id="side-menu">
+                <li class="nav-header">
+                    <div class="dropdown profile-element">
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                            <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold">{{request.user}}</strong>
+                             {% comment %} </span> <span class="text-muted text-xs block">General Manager<b class="caret"></b></span> </span> </a> {% endcomment %}
+                            <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                                <li><a href="{% url 'users:logout' %}">Logout</a></li>
+                            </ul>
+                    </div>
+                    <div class="logo-element">
+                        504
+                    </div>
+                </li>
+                
+
+
+                {% if request.user|has_group:"aereo" %} 
+                    <li>
+                        <a href="{% url 'messagesconf:dashboard_aereo' %}"><i class="fa fa-plane"></i> <span class="nav-label">Para Aéreos</span></a>
+                    </li>
+                {% endif %}
+
+                {% comment %} {% if request.user|has_group:"maritimo" %} 
+                    <li>
+                        <a href="{% url 'messagesconf:dashboard_maritimo' %}"><i class="fa fa-ship"></i> <span class="nav-label">Para Marítimos</span></a>
+                    </li>
+                {% endif %} {% endcomment %}
+                
+                <li>
+                    <a href="{% url 'messagesconf:configuration' %}"><i class="fa fa-cog"></i> <span class="nav-label">Configuración</span> </a>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+
+    <div id="page-wrapper" class="gray-bg">
+        <div class="row border-bottom">
+            <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
+                <div class="navbar-header">
+                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+                    <!-- <form role="search" class="navbar-form-custom" method="post" action="#">
+                        <div class="form-group">
+                            <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search">
+                        </div>
+                    </form> -->
+                </div>
+                <ul class="nav navbar-top-links navbar-right">
+                    <li>
+                        <a href="{% url 'users:logout' %}">
+                            <i class="fa fa-sign-out"></i> Cerrar sesión
+                        </a>
+                    </li>
+                </ul>
+
+            </nav>
+        </div>
+        <div class="wrapper wrapper-content animated fadeInRight">
+            {% block content %}
+            {% endblock %}
+        </div>
+        <div class="footer">
+           
+            <div>
+                <strong>Copyright</strong> 504 Express &copy; 2020
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Mainly scripts -->
+<script src="{% static 'js/jquery-3.1.1.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/plugins/metisMenu/jquery.metisMenu.js' %}"></script>
+<script src="{% static 'js/plugins/slimscroll/jquery.slimscroll.min.js' %}"></script>
+
+<!-- Custom and plugin javascript -->
+<script src="{% static 'js/inspinia.js' %}"></script>
+<script src="{% static 'js/plugins/pace/pace.min.js' %}"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+
+{% if messages %}
+    {% for message in messages %}
+        {% comment %} {% if message.tags == "alert alert-danger" %} {% endcomment %}
+            swal({
+                title: "{{message}}",
+                text: "",
+                icon: "{{message.extra_tags}}",
+                button: "Cerrar",
+            });
+        {% comment %} {% endif %} {% endcomment %}
+
+    {% endfor %}
+{% endif %}
+
+</script>
+</body>
+
+</html>
