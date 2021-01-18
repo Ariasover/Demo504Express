@@ -127,3 +127,7 @@ MESSAGE_TAGS = {
 
 # 
 # MESSAGE_STORAGE = "django.contrib.messages.storage.CookieStorage"
+
+
+import django
+django.setup
