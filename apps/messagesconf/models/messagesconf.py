@@ -54,4 +54,5 @@ class MessagesConfiguration(HistoryModel,models.Model):
 
 # admin.site.register(MessagesList)
 admin.site.register(MessagesConfiguration)
+admin.site.register(MessagesList)
 admin.site.register(ConfigurationType)

@@ -46,10 +46,9 @@ class DashboardAereoView(ListView):
 	queryset = MessagesList.objects.all()
 	paginate_by = 5
 	no_of_message = 1
-
 	def send_messages(self):
-			
-		message_text = MessagesConfiguration.objects.get(is_active=True).text
+		
+		# message_text = MessagesConfiguration.objects.get(is_active=True).text
 		customer_list = MessagesList.objects.filter(status=0)
 		driver = webdriver.Chrome(executable_path="/Users/ariasover/Documents/chromedriver")
 		driver.get("http://web.whatsapp.com")
@@ -57,6 +56,14 @@ class DashboardAereoView(ListView):
 		mensajes = 0
 		
 		for count,customer in enumerate(customer_list):
+			message_text = MessagesConfiguration.objects.get(is_active=True).text
+			print('VERIFICAR EL NOMBRE antes de enviar',customer.name)
+			print('VERIFICAR EL departure date antes de enviar',customer.departure_date)
+			print('VERIFICAR EL amount antes de enviar',customer.amount)
+			print('VERIFICAR EL weight antes de enviar',customer.weight_greather)
+			print('VERIFICAR EL weighttype antes de enviar',customer.weight_type)
+
+
 			message_text = message_text.replace('/name/',customer.name)
 			message_text = message_text.replace('/fecha/',customer.departure_date)
 			message_text = message_text.replace('/monto/','{:0,.2f}'.format(customer.amount))
@@ -79,7 +86,7 @@ class DashboardAereoView(ListView):
 					txt_box.send_keys(message_text)
 					txt_box.send_keys("\n")
 
-				
+				sleep(3)
 				customer_list.filter(pk=customer.pk).update(status = 1)
 				print('MENSAJE',count+1)
 				print('Estado Actualizado')
@@ -88,7 +95,7 @@ class DashboardAereoView(ListView):
 				
 			except Exception as e:
 				print('SEND WHA===',e)
-			break #TODO ESTE BREAK SIRVE PARA PODER ENVIAR SOLAMENTE UN MENSAJE
+			# break #TODO ESTE BREAK SIRVE PARA PODER ENVIAR SOLAMENTE UN MENSAJE
 		print('CERRANDO CHROME') #TODO
 		messages.success(self.request, 'Se enviaron '+str(mensajes)+ ' mensajes')
 		driver.quit()	
@@ -123,12 +130,12 @@ class DashboardAereoView(ListView):
 								if  not hoja1['C'+str(i)].value == None:
 									messages_list = MessagesList()
 									messages_list.name=hoja1['B'+str(i)].value
-									messages_list.phone=hoja1['C'+str(i)].value #TODO SUSTITUIR ESTO POR hoja1['LETRA'+str(i)].value
+									messages_list.phone="504"+hoja1['C'+str(i)].value #TODO SUSTITUIR ESTO POR hoja1['LETRA'+str(i)].value
 									# messages_list.phone='50496068888' #TODO SUSTITUIR ESTO POR hoja1['LETRA'+str(i)].value
 									messages_list.departure_date = hoja1['M2'].value
 									messages_list.amount = hoja1['N'+str(i)].value
-									messages_list.weight_greather = hoja1['M'+str(i)].value
-									messages_list.weight_type = hoja1['L'+str(i)].value
+									messages_list.weight_greather = hoja1['N'+str(i)].value
+									messages_list.weight_type = hoja1['M'+str(i)].value
 									messages_list.creation_user=self.request.user
 									messages_list.modification_user=self.request.user
 									messages_list.save()
@@ -160,160 +167,14 @@ class DashboardAereoView(ListView):
 		return context
 
 
-# class DashboardMaritimoView(ListView):
-# 	template_name = 'dashboard_maritimo.html'
-# 	queryset = MessagesList.objects.all()
-# 	paginate_by = 5
-# 	no_of_message = 1
-# 	def initalize(self):
-			
-# 		# message_text = '*Prueba 3, automatizacion de Whatsapp por medio de Python*'
-# 		message_text = MessagesConfiguration.objects.get(is_active=True).text
-# 		# no_of_message = 1  # no. de tiempo desea que el mensaje sea enviado
-# 		# lista de números de teléfono puede ser de cualquier longitud
-# 		# Puedes agregar a la lista mas de un numero ejem  [573024508559,num2,num3,num4]
 
-# 		messages_list = MessagesList.objects.filter(status=0)
-# 		driver = webdriver.Chrome(executable_path="/Users/ariasover/Documents/chromedriver")
-# 		driver.get("http://web.whatsapp.com")
-# 		sleep(10)
-
-		
-
-# 		for count,moblie_no in enumerate(messages_list):
-# 			# REPLACE TEXT IN MESSAGE
-# 			print('VERIFICAR NOMBRE',moblie_no.name)
-			
-			
-# 			message_text = message_text.replace('/name/',moblie_no.name)
-# 			message_text = message_text.replace('/fecha/',moblie_no.departure_date)
-# 			message_text = message_text.replace('/monto/','{:0,.2f}'.format(moblie_no.amount))
-# 			message_text = message_text.replace('/pesomayor/',moblie_no.weight_greather)
-# 			message_text = message_text.replace('/tipo_peso/',moblie_no.weight_type)
-# 			print('TEXTO REEMPLAZADO',message_text)
-
-# 			# ================HEAVY PROCESS==================
-# 			try:
-# 				driver.get(
-# 					"https://web.whatsapp.com/send?phone={}&source=&data=#".format(moblie_no.phone))
-# 				try:
-# 					driver.switch_to_alert().accept()
-# 				except Exception as e:
-# 					pass
-# 				# print('')
-# 				xpath = '//*[@id="main"]/footer/div[1]/div[2]/div/div[2]'
-# 				time=30
-# 				WebDriverWait(driver, time).until(EC.presence_of_element_located((By.XPATH, xpath)))
-				
-# 				txt_box = driver.find_element(
-# 				By.XPATH, '//*[@id="main"]/footer/div[1]/div[2]/div/div[2]')
-# 				global no_of_message
-# 				for x in range(self.no_of_message):
-# 					txt_box.send_keys(message_text)
-# 					txt_box.send_keys("\n")
-
-				
-# 				messages_list.filter(pk=moblie_no.pk).update(status = 1)
-# 				print('MENSAJE',count+1)
-# 				print('Estado Actualizado')
-
-				
-# 			except Exception as e:
-# 				print('SEND WHA===',e)
-# 			break
-# 		print('CERRANDO CHROME')
-# 		driver.quit()	
-
-# 	def post(self, request):
-# 		if request.POST['options'] == "send_all":
-# 			# SEND MESSAGES
-# 			self.initalize()
-# 		elif request.POST['options'] == 'excel':
-# 			exito = ''
-# 			error = ''
-# 			try: 
-# 				file = request.FILES['myfile']
-# 				from openpyxl import load_workbook
-# 				try:
-# 					# GET FILE INFORMATION
-# 					doc = load_workbook(file,data_only=True)
-# 					nombres_hojas = doc.sheetnames
-# 					hoja1 = doc.get_sheet_by_name(nombres_hojas[0])
-# 					hoja2 = doc.get_sheet_by_name(nombres_hojas[1])
-# 					mayor1 = hoja1.max_row      
-# 					# mayor2 = hoja2.max_row      
-# 					x=4
-# 					# print('VERIFICAR QUE PUEDO LEER LA HOJA',hoja1['B4'].value)
-# 					print('Importando...')
-# 					for i in range (4, 171):
-# 						# CREATE AN INSTANCE OF MODEL
-						
-# 						# print('Nombre',hoja1['B'+str(i)].value)
-# 						messages_list = MessagesList()
-# 						messages_list.name=hoja1['B'+str(i)].value
-# 						messages_list.phone='50496068888' #TODO SUSTITUIR ESTO POR hoja1['LETRA'+str(i)].value
-
-# 						messages_list.departure_date = hoja1['L2'].value
-# 						messages_list.amount = hoja1['N'+str(i)].value
-# 						messages_list.weight_greather = hoja1['M'+str(i)].value
-# 						messages_list.weight_type = hoja1['L'+str(i)].value
-
-# 						messages_list.creation_user=self.request.user
-# 						messages_list.modification_user=self.request.user
-# 						messages_list.save()
-# 						x = x + 1
-#                     messages.success('Informacion cargada con exito')
-# 					exito = 'Información cargada con éxito'
-# 				except Exception as e:
-# 					print('error',e)
-# 					error = 'Surgio un error al cargar información'
-				
-# 				exito = 'Información cargada con éxito'
-
-# 			except Exception as e:
-# 				print('error', e)
-# 				#raise e
-# 				error = 'Surgio un error al cargar información'
-
-	
-
-# 			# person_resource = MessagesListResource()
-# 			# dataset = Dataset()
-# 			# new_persons = request.FILES['myfile']
-# 			# try:
-# 			# 	imported_data = dataset.load(new_persons.read(), format='xlsx')
-# 			# 	result = person_resource.import_data(dataset, dry_run=True,raise_errors=True)
-# 			# except Exception as e:
-# 			# 	print('ERRORES',e)
-# 		else:
-# 			print('hice post')
-				
-# 		return HttpResponseRedirect('/messages/dashboard-maritimo')
-	
-
-# 	def get_context_data(self, **kwargs):
-# 		# Call the base implementation first to get a context
-# 		context = super().get_context_data(**kwargs)
-# 		not_sent_messages= self.queryset.filter(status=0)[:5]
-# 		quantity_not_sent= len(self.queryset.filter(status=0))
-
-# 		sent_messages= self.queryset.filter(status=1)
-# 		quantity_sent= len(sent_messages)
-
-# 		context.update({
-# 			'sent_messages': sent_messages[:5],
-# 			'not_sent_messages': not_sent_messages,
-# 			'quantity_not_sent':quantity_not_sent,
-# 		 	'quantity_sent':quantity_sent
-# 		})		
-# 		return context
 
 
 class SpeechConfigurationView(ListView):
 	template_name = 'speech_configuration.html'
 	queryset = MessagesConfiguration.objects.filter()
 	paginate_by = 5
-	no_of_message = 1
+	no_of_message = 2
 	
 	def post(self,request):
 		print('hice post')
