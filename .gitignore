@@ -8,6 +8,7 @@ __pycache__/
 *.so
 #sql lite
 *.sqlite3
+chromedriver
 
 # Distribution / packaging
 .Python

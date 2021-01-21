@@ -67,7 +67,7 @@ class IndexView(View):
 					r = requests.get('https://chromedriver.storage.googleapis.com/'+response.text+'/chromedriver_win32.zip')
 				
 				ChromeDriverVerification.objects.create(version=str(response.text))
-			
+
 				z = zipfile.ZipFile(io.BytesIO(r.content))
 				z.extractall(settings.BASE_DIR)
 			
