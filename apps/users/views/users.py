@@ -52,24 +52,24 @@ class IndexView(View):
 		# Comprobar speech activo.
 		
 		try:
-			response = requests.get('https://chromedriver.storage.googleapis.com/LATEST_RELEASE')
-			version = ChromeDriverVerification.objects.filter(version=str(response.text)).last()
-			print('VERIFICAR VERSION DE CHROME EN BD',version)
-			print('VERIFICAR VERSION DE CHROME EN google',str(response.text))
+			# Verificar la version de chrome actual
 			
-			if not  str(version) == str(response.text):
-				print('son diferentes')
-				if platform == "linux":
-					r = requests.get('https://chromedriver.storage.googleapis.com/'+response.text+'/chromedriver_linux64.zip')
-				elif platform == "darwin":
-					r = requests.get('https://chromedriver.storage.googleapis.com/'+response.text+'/chromedriver_mac64.zip')
-				else:
-					r = requests.get('https://chromedriver.storage.googleapis.com/'+response.text+'/chromedriver_win32.zip')
+			online_version = requests.get('https://chromedriver.storage.googleapis.com/LATEST_RELEASE')
+			plistloc = "/Applications/Google Chrome.app/Contents/Info.plist"
+			las_version_on_db = ChromeDriverVerification.objects.filter(version=str(online_version.text)).last()
+			# if not str(las_version_on_db) == str(online_version.text):
+			print('son diferentes')
+				# if platform == "linux":
+					# r÷ = requests.get('https://chromedriver.storage.googleapis.com/'+response.text+'/chromedriver_linux64.zip')
+				# elif platform == "darwin":
+			r = requests.get('https://chromedriver.storage.googleapis.com/'+'87.0.4280.88'+'/chromedriver_mac64.zip')
+				# else:
+					# r = requests.get('https://chromedriver.storage.googleapis.com/'+response.text+'/chromedriver_win32.zip')
 				
-				ChromeDriverVerification.objects.create(version=str(response.text))
+				# ChromeDriverVerification.objects.create(version=str(response.text))
 
-				z = zipfile.ZipFile(io.BytesIO(r.content))
-				z.extractall(settings.BASE_DIR)
+			z = zipfile.ZipFile(io.BytesIO(r.content))
+			z.extractall(settings.BASE_DIR)
 			
 		except Exception as e:
 			print('ERROR',e)
