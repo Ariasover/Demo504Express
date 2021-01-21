@@ -64,7 +64,6 @@ class DashboardAereoView(ListView):
 		else:
 			driver = webdriver.Chrome(executable_path=settings.BASE_DIR+'chromedriver.exe')
 		
-
 		driver.get("http://web.whatsapp.com")
 		sleep(10)
 		mensajes = 0

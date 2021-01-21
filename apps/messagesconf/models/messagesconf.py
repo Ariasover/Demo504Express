@@ -61,9 +61,19 @@ class ErrorNumber(HistoryModel,models.Model):
 	def __str__(self):
 		"""Return Name."""
 		return str(self.message_list)
+	
+
+class ChromeDriverVerification(HistoryModel,models.Model):
+	id_chrome_driver_verification= models.AutoField(db_column='IdChromeDriverVerification', primary_key=True)
+	version = models.CharField(db_column='Version', max_length=100, blank=True, null=True)
+	
+	def __str__(self):
+		"""Return Name."""
+		return str(self.version)
 
 # admin.site.register(MessagesList)
 admin.site.register(MessagesConfiguration)
 admin.site.register(MessagesList)
 admin.site.register(ConfigurationType)
 admin.site.register(ErrorNumber)
+admin.site.register(ChromeDriverVerification)
