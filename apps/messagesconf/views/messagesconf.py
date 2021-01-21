@@ -13,7 +13,7 @@ from django.db import transaction
 
 
 # Models
-from apps.messagesconf.models import *
+from apps.messagesconf.models.messagesconf import *
 
 # Forms
 from ..forms import MessagesConfigurationForm
@@ -31,9 +31,14 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
+
 
 # Local
 import socket,os
+from pathlib import Path
+from sys import platform
 
 
 class ConfigurationView(View):
@@ -46,45 +51,49 @@ class DashboardAereoView(ListView):
 	queryset = MessagesList.objects.all()
 	paginate_by = 5
 	no_of_message = 1
+	
+	
 	def send_messages(self):
 		
 		# message_text = MessagesConfiguration.objects.get(is_active=True).text
 		customer_list = MessagesList.objects.filter(status=0)
-		driver = webdriver.Chrome(executable_path="/Users/ariasover/Documents/chromedriver")
+
+
+		if platform == "linux" or platform == "linux2" or platform == "darwin":
+			driver = webdriver.Chrome(executable_path=settings.BASE_DIR+'chromedriver')
+		else:
+			driver = webdriver.Chrome(executable_path=settings.BASE_DIR+'chromedriver.exe')
+		
+
 		driver.get("http://web.whatsapp.com")
 		sleep(10)
 		mensajes = 0
 		
 		for count,customer in enumerate(customer_list):
 			message_text = MessagesConfiguration.objects.get(is_active=True).text
-			print('VERIFICAR EL NOMBRE antes de enviar',customer.name)
-			print('VERIFICAR EL departure date antes de enviar',customer.departure_date)
-			print('VERIFICAR EL amount antes de enviar',customer.amount)
-			print('VERIFICAR EL weight antes de enviar',customer.weight_greather)
-			print('VERIFICAR EL weighttype antes de enviar',customer.weight_type)
-
-
 			message_text = message_text.replace('/name/',customer.name)
 			message_text = message_text.replace('/fecha/',customer.departure_date)
 			message_text = message_text.replace('/monto/','{:0,.2f}'.format(customer.amount))
 			message_text = message_text.replace('/pesomayor/',customer.weight_greather)
 			message_text = message_text.replace('/tipo_peso/',customer.weight_type)
+			print('VERIFICAR EL NUMERO',customer.phone)
 			try:
 				driver.get(
-					"https://web.whatsapp.com/send?phone={}&source=&data=#".format(customer.phone))
+					"https://web.whatsapp.com/send?phone={}&source=&data=#".format(str(customer.phone)))
 				try:
 					driver.switch_to_alert().accept()
 				except Exception as e:
-					pass
+					print('Error',e)
 				xpath = '//*[@id="main"]/footer/div[1]/div[2]/div/div[2]'
 				time=30
 				WebDriverWait(driver, time).until(EC.presence_of_element_located((By.XPATH, xpath)))
 				txt_box = driver.find_element(
 				By.XPATH, '//*[@id="main"]/footer/div[1]/div[2]/div/div[2]')
 				global no_of_message
-				for x in range(self.no_of_message):
-					txt_box.send_keys(message_text)
-					txt_box.send_keys("\n")
+				for part in message_text.split('\n'):
+					txt_box.send_keys(part)
+					ActionChains(driver).key_down(Keys.SHIFT).key_down(Keys.ENTER).key_up(Keys.SHIFT).key_up(Keys.ENTER).perform()
+				ActionChains(driver).send_keys(Keys.RETURN).perform()
 
 				sleep(3)
 				customer_list.filter(pk=customer.pk).update(status = 1)
@@ -95,8 +104,20 @@ class DashboardAereoView(ListView):
 				
 			except Exception as e:
 				print('SEND WHA===',e)
+				# Save if number was bad
+				if not ErrorNumber.objects.filter(message_list=customer).exists():	
+					mensajes = mensajes-1
+					error = ErrorNumber()
+					error.message_list = customer
+					error.creation_user=self.request.user
+					error.modification_user=self.request.user
+					error.save()
+					messages.success(self.request, 'El número de teléfono ' +str(customer.phone)+ ' es incorrecto.')
+
+
 			# break #TODO ESTE BREAK SIRVE PARA PODER ENVIAR SOLAMENTE UN MENSAJE
 		print('CERRANDO CHROME') #TODO
+		print('VERIFICAR EL NUMERO DE MENSAJES',mensajes)
 		messages.success(self.request, 'Se enviaron '+str(mensajes)+ ' mensajes')
 		driver.quit()	
 
@@ -118,7 +139,7 @@ class DashboardAereoView(ListView):
 						# Verificar el excel linea por linea.
 						for y in range(4,1000):
 							print('y inicia en ',y)
-							if not hoja1['A'+str(y)].value == None:
+							if not hoja1['B'+str(y)].value == None:
 								mayor=mayor+1
 							else:
 								break
@@ -133,7 +154,7 @@ class DashboardAereoView(ListView):
 									messages_list.phone="504"+hoja1['C'+str(i)].value #TODO SUSTITUIR ESTO POR hoja1['LETRA'+str(i)].value
 									# messages_list.phone='50496068888' #TODO SUSTITUIR ESTO POR hoja1['LETRA'+str(i)].value
 									messages_list.departure_date = hoja1['M2'].value
-									messages_list.amount = hoja1['N'+str(i)].value
+									messages_list.amount = hoja1['P'+str(i)].value
 									messages_list.weight_greather = hoja1['N'+str(i)].value
 									messages_list.weight_type = hoja1['M'+str(i)].value
 									messages_list.creation_user=self.request.user

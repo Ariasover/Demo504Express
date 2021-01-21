@@ -39,6 +39,7 @@ class LogoutView(View):
 
 class IndexView(View):
 	def get(self, request):
-        # Comprobar speech activo.
-        
+		# Comprobar speech activo.
+		# print('VERIFICAR EL PATH',)
+		
 		return render(request, 'index.html')

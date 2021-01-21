@@ -24,7 +24,7 @@ class MessagesList(HistoryModel,models.Model):
 	modification_user = models.ForeignKey(User, models.DO_NOTHING, db_column='ModificationUser',related_name='modification_user')
 	# messages_configuration = models.ForeignKey('MessagesConfiguration', models.DO_NOTHING, db_column='MessagesConfiguration')
 	
-    # def __str__(self):
+	# def __str__(self):
 	# 	"""Return Name."""
 	# 	return self.name
 
@@ -52,7 +52,18 @@ class MessagesConfiguration(HistoryModel,models.Model):
 		"""Return Name."""
 		return self.name
 
+class ErrorNumber(HistoryModel,models.Model):
+	id_error_number= models.AutoField(db_column='IdErrorNumber', primary_key=True)
+	message_list = models.ForeignKey('MessagesList', models.DO_NOTHING, db_column='MessageList')
+	creation_user = models.ForeignKey(User, models.DO_NOTHING, db_column='CreationUser',related_name='en_creation_user')
+	modification_user = models.ForeignKey(User, models.DO_NOTHING, db_column='ModificationUser',related_name='en_modification_user')
+	
+	def __str__(self):
+		"""Return Name."""
+		return str(self.message_list)
+
 # admin.site.register(MessagesList)
 admin.site.register(MessagesConfiguration)
 admin.site.register(MessagesList)
 admin.site.register(ConfigurationType)
+admin.site.register(ErrorNumber)
