@@ -1,6 +1,6 @@
 # Platform
 from sys import platform
-import os,sys
+import os,sys, subprocess
 
 
 def get_platform_architecture():
