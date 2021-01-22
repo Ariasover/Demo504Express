@@ -1,6 +1,7 @@
 # Platform
 from sys import platform
-import os
+import os,sys
+
 
 def get_platform_architecture():
     if sys.platform.startswith('linux') and sys.maxsize > 2 ** 32:
