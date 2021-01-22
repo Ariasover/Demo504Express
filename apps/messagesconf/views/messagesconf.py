@@ -71,9 +71,12 @@ class DashboardAereoView(ListView):
 			driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+'/lib/python3.7/site-packages/chromedriver_autoinstaller/'+chrome_server_version+'/chromedriver')
 		else:
 			chrome_server_version = get_chrome_version()
+			print('verificar la version de chrome',get_chrome_version())
 			chrome_server_version = chrome_server_version[0]+chrome_server_version[1] #for example '87' #TODO CAMBIAR ESTE METODO POR EL DE CHROMDRIVER()PARA OBTENER MEJOR LA VERSION
-
-			driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+'\Lib\site-packages\chromedriver_autoinstaller>'+chrome_server_version+'\chromedriver.exe')
+			print(chrome_server_version)
+			print('ULTIMA VERIFICACION',str(settings.VIRTUALENV_DIR)+"\Lib\site-packages\chromedriver_autoinstaller\\"+chrome_server_version+"\chromedriver.exe")
+			driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+"\Lib\site-packages\chromedriver_autoinstaller\\"+chrome_server_version+"\chromedriver.exe")
+			
 
 		driver.get("http://web.whatsapp.com")
 		sleep(10)
