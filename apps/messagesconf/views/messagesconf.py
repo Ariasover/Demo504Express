@@ -60,12 +60,11 @@ class DashboardAereoView(ListView):
 
 
 		if platform == "linux" or platform == "linux2" or platform == "darwin":
-			print('verificar',settings.BASE_DIR)
-			os.chmod(str(settings.BASE_DIR)+'/chromedriver', 755)
-			driver = webdriver.Chrome(executable_path=str(settings.BASE_DIR)+'/chromedriver')
+			# os.chmod(str(settings.BASE_DIR)+'/chromedriver', 755)
+			driver = webdriver.Chrome(executable_path=settings.VIRTUALENV_DIR+'lib/python3.7/site-packages/chromedriver_autoinstaller/'+chrome_server_version+'/chromedriver')
 		else:
-			driver = webdriver.Chrome(executable_path=str(settings.BASE_DIR)+'\chromedriver.exe')
-		
+			driver = webdriver.Chrome(executable_path=settings.VIRTUALENV_DIR+'Lib\site-packages\chromedriver_autoinstaller>'+chrome_server_version+'\chromedriver.exe')
+
 		driver.get("http://web.whatsapp.com")
 		sleep(10)
 		mensajes = 0
