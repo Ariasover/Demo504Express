@@ -59,7 +59,9 @@ class IndexView(View):
 		# Comprobar speech activo.
 		
 		try:
+			print('verificar')
 			chromedriver_autoinstaller.install()
+			print('verificar2',chromedriver_autoinstaller)
 			
     			
 				# plistloc = "/Applications/Google Chrome.app/Contents/Info.plist"
