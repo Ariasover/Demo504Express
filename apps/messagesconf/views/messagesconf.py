@@ -36,7 +36,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 
 # Local
-import socket,os
+import socket,os,plistlib
 from pathlib import Path
 from sys import platform
 
@@ -60,10 +60,14 @@ class DashboardAereoView(ListView):
 
 
 		if platform == "linux" or platform == "linux2" or platform == "darwin":
-			# os.chmod(str(settings.BASE_DIR)+'/chromedriver', 755)
-			driver = webdriver.Chrome(executable_path=settings.VIRTUALENV_DIR+'lib/python3.7/site-packages/chromedriver_autoinstaller/'+chrome_server_version+'/chromedriver')
+			os.chmod(str(settings.BASE_DIR)+'/chromedriver', 755)
+			plistloc = "/Applications/Google Chrome.app/Contents/Info.plist"
+			pl = plistlib.readPlist(plistloc)
+			chrome_server_version = pl["CFBundleShortVersionString"]
+			chrome_server_version = chrome_server_version[0]+chrome_server_version[1] #for example '87'
+			driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+'/lib/python3.7/site-packages/chromedriver_autoinstaller/'+chrome_server_version+'/chromedriver')
 		else:
-			driver = webdriver.Chrome(executable_path=settings.VIRTUALENV_DIR+'Lib\site-packages\chromedriver_autoinstaller>'+chrome_server_version+'\chromedriver.exe')
+			driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+'\Lib\site-packages\chromedriver_autoinstaller>'+chrome_server_version+'\chromedriver.exe')
 
 		driver.get("http://web.whatsapp.com")
 		sleep(10)
