@@ -11,9 +11,12 @@ from django.views.generic import ListView,UpdateView,CreateView,DeleteView
 from django.contrib import messages
 from django.db import transaction
 
-
+	
 # Models
 from apps.messagesconf.models.messagesconf import *
+
+# Utils
+from apps.utils.chrome_version import chrome_version
 
 # Forms
 from ..forms import MessagesConfigurationForm
@@ -64,9 +67,12 @@ class DashboardAereoView(ListView):
 			plistloc = "/Applications/Google Chrome.app/Contents/Info.plist"
 			pl = plistlib.readPlist(plistloc)
 			chrome_server_version = pl["CFBundleShortVersionString"]
-			chrome_server_version = chrome_server_version[0]+chrome_server_version[1] #for example '87'
+			chrome_server_version = chrome_server_version[0]+chrome_server_version[1] #for example '87' #TODO CAMBIAR ESTE METODO POR EL DE CHROMDRIVER()PARA OBTENER MEJOR LA VERSION
 			driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+'/lib/python3.7/site-packages/chromedriver_autoinstaller/'+chrome_server_version+'/chromedriver')
 		else:
+			chrome_server_version = chrome_version()
+			chrome_server_version = chrome_server_version[0]+chrome_server_version[1] #for example '87' #TODO CAMBIAR ESTE METODO POR EL DE CHROMDRIVER()PARA OBTENER MEJOR LA VERSION
+
 			driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+'\Lib\site-packages\chromedriver_autoinstaller>'+chrome_server_version+'\chromedriver.exe')
 
 		driver.get("http://web.whatsapp.com")

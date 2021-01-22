@@ -11,11 +11,9 @@ from django.urls import reverse
 # Model
 from apps.messagesconf.models.messagesconf import ChromeDriverVerification
 
+
 # Local
 import requests, zipfile, io, socket,os, plistlib
-
-# Platform
-from sys import platform
 
 # Selenium
 from selenium import webdriver
@@ -61,7 +59,7 @@ class IndexView(View):
 		try:
 			chromedriver_autoinstaller.install()
 			
-    			
+				
 				# plistloc = "/Applications/Google Chrome.app/Contents/Info.plist"
 				# pl = plistlib.readPlist(plistloc)
 				# chrome_server_version = pl["CFBundleShortVersionString"]
