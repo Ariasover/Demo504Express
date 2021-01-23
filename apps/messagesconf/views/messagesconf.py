@@ -125,13 +125,13 @@ class DashboardAereoView(ListView):
 					error.creation_user=self.request.user
 					error.modification_user=self.request.user
 					error.save()
-					messages.success(self.request, 'El número de teléfono ' +str(customer.phone)+ ' es incorrecto.')
+					messages.success(self.request, 'El número de teléfono ' +str(customer.phone)+ ' es incorrecto.',extra_tags='error')
 
 
 			# break #TODO ESTE BREAK SIRVE PARA PODER ENVIAR SOLAMENTE UN MENSAJE
 		print('CERRANDO CHROME') #TODO
 		print('VERIFICAR EL NUMERO DE MENSAJES',mensajes)
-		messages.success(self.request, 'Se enviaron '+str(mensajes)+ ' mensajes')
+		messages.success(self.request, 'Se enviaron '+str(mensajes)+ ' mensajes',extra_tags='success')
 		driver.quit()	
 
 	def post(self, request):
