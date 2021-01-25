@@ -57,11 +57,8 @@ class DashboardAereoView(ListView):
 	
 	
 	def send_messages(self):
-		
-		# message_text = MessagesConfiguration.objects.get(is_active=True).text
+
 		customer_list = MessagesList.objects.filter(status=0)
-
-
 		if platform == "linux" or platform == "linux2" or platform == "darwin":
 			os.chmod(str(settings.BASE_DIR)+'/chromedriver', 755)
 			plistloc = "/Applications/Google Chrome.app/Contents/Info.plist"
@@ -71,12 +68,8 @@ class DashboardAereoView(ListView):
 			driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+'/lib/python3.7/site-packages/chromedriver_autoinstaller/'+chrome_server_version+'/chromedriver')
 		else:
 			chrome_server_version = get_chrome_version()
-			print('verificar la version de chrome',get_chrome_version())
 			chrome_server_version = chrome_server_version[0]+chrome_server_version[1] #for example '87' #TODO CAMBIAR ESTE METODO POR EL DE CHROMDRIVER()PARA OBTENER MEJOR LA VERSION
-			print(chrome_server_version)
-			print('ULTIMA VERIFICACION',str(settings.VIRTUALENV_DIR)+"\Lib\site-packages\chromedriver_autoinstaller\\"+chrome_server_version+"\chromedriver.exe")
-			driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+"\Lib\site-packages\chromedriver_autoinstaller\\"+chrome_server_version+"\chromedriver.exe")
-			
+			driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+"\Lib\site-packages\chromedriver_autoinstaller\\"+chrome_server_version+"\chromedriver.exe")		
 
 		driver.get("http://web.whatsapp.com")
 		sleep(10)
@@ -89,7 +82,6 @@ class DashboardAereoView(ListView):
 			message_text = message_text.replace('/monto/','{:0,.2f}'.format(customer.amount))
 			message_text = message_text.replace('/pesomayor/',customer.weight_greather)
 			message_text = message_text.replace('/tipo_peso/',customer.weight_type)
-			print('VERIFICAR EL NUMERO',customer.phone)
 			try:
 				driver.get(
 					"https://web.whatsapp.com/send?phone={}&source=&data=#".format(str(customer.phone)))
@@ -129,8 +121,6 @@ class DashboardAereoView(ListView):
 
 
 			# break #TODO ESTE BREAK SIRVE PARA PODER ENVIAR SOLAMENTE UN MENSAJE
-		print('CERRANDO CHROME') #TODO
-		print('VERIFICAR EL NUMERO DE MENSAJES',mensajes)
 		messages.success(self.request, 'Se enviaron '+str(mensajes)+ ' mensajes',extra_tags='success')
 		driver.quit()	
 
@@ -156,16 +146,14 @@ class DashboardAereoView(ListView):
 								mayor=mayor+1
 							else:
 								break
-						print('verificar el numero mayor',mayor)
-						for i in range (4, mayor+4):
-							print('VERIFICAR C',hoja1['C'+str(i)].value)
-							print('VERIFICAR EL LEN',len([hoja1['C'+str(i)].value]))
+
+						for i in range (4, mayor+4):	
 							if not hoja1['N'+str(i)].value == '#VALUE!' or not hoja1['N'+str(i)].value == '#N/A':
 								if  not hoja1['C'+str(i)].value == None:
 									messages_list = MessagesList()
 									messages_list.name=hoja1['B'+str(i)].value
-									messages_list.phone="504"+hoja1['C'+str(i)].value #TODO SUSTITUIR ESTO POR hoja1['LETRA'+str(i)].value
-									# messages_list.phone='50496068888' #TODO SUSTITUIR ESTO POR hoja1['LETRA'+str(i)].value
+									messages_list.phone="504"+str(hoja1['C'+str(i)].value) 
+									
 									messages_list.departure_date = hoja1['M2'].value
 									messages_list.amount = hoja1['P'+str(i)].value
 									messages_list.weight_greather = hoja1['N'+str(i)].value
@@ -173,6 +161,8 @@ class DashboardAereoView(ListView):
 									messages_list.creation_user=self.request.user
 									messages_list.modification_user=self.request.user
 									messages_list.save()
+									
+
 									x = x + 1
 								messages.success(request, '¡Archivo subido con éxito!', extra_tags='success')
 					else:

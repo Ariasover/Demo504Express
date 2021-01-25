@@ -60,7 +60,7 @@ class ErrorNumber(HistoryModel,models.Model):
 	
 	def __str__(self):
 		"""Return Name."""
-		return str(self.message_list)
+		return str(self.message_list.name)
 	
 
 class ChromeDriverVerification(HistoryModel,models.Model):
