@@ -11,21 +11,22 @@ from django.views.generic import ListView,UpdateView,CreateView,DeleteView
 from django.contrib import messages
 from django.db import transaction
 
-	
+
 # Models
 from apps.messagesconf.models.messagesconf import *
+
 
 # Utils
 from apps.utils.chrome_version import get_chrome_version
 
+
 # Forms
 from ..forms import MessagesConfigurationForm
+
 
 # Openpyxl
 from openpyxl import load_workbook
 
-# Time
-from time import sleep
 
 # Selenium
 from selenium.webdriver.common.by import By
@@ -42,6 +43,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 import socket,os,plistlib
 from pathlib import Path
 from sys import platform
+from time import sleep
 
 
 class ConfigurationView(View):
@@ -55,10 +57,8 @@ class DashboardAereoView(ListView):
 	paginate_by = 5
 	no_of_message = 1
 	
-	
-	def send_messages(self):
 
-		customer_list = MessagesList.objects.filter(status=0)
+	def get_chrome_driver(self):
 		if platform == "linux" or platform == "linux2" or platform == "darwin":
 			os.chmod(str(settings.BASE_DIR)+'/chromedriver', 755)
 			plistloc = "/Applications/Google Chrome.app/Contents/Info.plist"
@@ -70,11 +70,13 @@ class DashboardAereoView(ListView):
 			chrome_server_version = get_chrome_version()
 			chrome_server_version = chrome_server_version[0]+chrome_server_version[1] #for example '87' #TODO CAMBIAR ESTE METODO POR EL DE CHROMDRIVER()PARA OBTENER MEJOR LA VERSION
 			driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+"\Lib\site-packages\chromedriver_autoinstaller\\"+chrome_server_version+"\chromedriver.exe")		
-
+		return driver
+	def send_messages(self,customer_list):
+		driver = self.get_chrome_driver()
 		driver.get("http://web.whatsapp.com")
 		sleep(10)
 		mensajes = 0
-		
+	
 		for count,customer in enumerate(customer_list):
 			message_text = MessagesConfiguration.objects.get(is_active=True).text
 			message_text = message_text.replace('/name/',customer.name)
@@ -122,11 +124,16 @@ class DashboardAereoView(ListView):
 
 			# break #TODO ESTE BREAK SIRVE PARA PODER ENVIAR SOLAMENTE UN MENSAJE
 		messages.success(self.request, 'Se enviaron '+str(mensajes)+ ' mensajes',extra_tags='success')
-		driver.quit()	
-
+		driver.quit()
+	
 	def post(self, request):
 		if request.POST['options'] == "send_all":
-			self.send_messages()
+			# Get a list of not sent messages
+			customer_list = MessagesList.objects.filter(status=0)
+			if customer_list.exists():	 
+				self.send_messages(customer_list)
+			else:
+				messages.error(self.request, 'No hay destinatarios',extra_tags='error')
 		elif request.POST['options'] == 'upload_excel':
 			try: 
 				with transaction.atomic():

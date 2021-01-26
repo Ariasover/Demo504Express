@@ -54,7 +54,7 @@ class MessagesConfiguration(HistoryModel,models.Model):
 
 class ErrorNumber(HistoryModel,models.Model):
 	id_error_number= models.AutoField(db_column='IdErrorNumber', primary_key=True)
-	message_list = models.ForeignKey('MessagesList', models.DO_NOTHING, db_column='MessageList')
+	message_list = models.ForeignKey('MessagesList',on_delete=models.CASCADE, db_column='MessageList')
 	creation_user = models.ForeignKey(User, models.DO_NOTHING, db_column='CreationUser',related_name='en_creation_user')
 	modification_user = models.ForeignKey(User, models.DO_NOTHING, db_column='ModificationUser',related_name='en_modification_user')
 	
