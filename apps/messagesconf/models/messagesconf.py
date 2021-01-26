@@ -24,9 +24,9 @@ class MessagesList(HistoryModel,models.Model):
 	modification_user = models.ForeignKey(User, models.DO_NOTHING, db_column='ModificationUser',related_name='modification_user')
 	# messages_configuration = models.ForeignKey('MessagesConfiguration', models.DO_NOTHING, db_column='MessagesConfiguration')
 	
-	# def __str__(self):
-	# 	"""Return Name."""
-	# 	return self.name
+	def __str__(self):
+		"""Return Name."""
+		return str(self.name)+"-"+str(self.pk)
 
 class ConfigurationType(HistoryModel,models.Model):
 	id_configuration_type= models.AutoField(db_column='IdConfigurationType', primary_key=True)
