@@ -71,6 +71,8 @@ class DashboardAereoView(ListView):
 			chrome_server_version = chrome_server_version[0]+chrome_server_version[1] #for example '87' #TODO CAMBIAR ESTE METODO POR EL DE CHROMDRIVER()PARA OBTENER MEJOR LA VERSION
 			driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+"\Lib\site-packages\chromedriver_autoinstaller\\"+chrome_server_version+"\chromedriver.exe")		
 		return driver
+
+
 	def send_messages(self,customer_list):
 		driver = self.get_chrome_driver()
 		driver.get("http://web.whatsapp.com")
@@ -78,13 +80,17 @@ class DashboardAereoView(ListView):
 		mensajes = 0
 	
 		for count,customer in enumerate(customer_list):
-			message_text = MessagesConfiguration.objects.get(is_active=True).text
-			message_text = message_text.replace('/name/',customer.name)
-			message_text = message_text.replace('/fecha/',customer.departure_date)
-			message_text = message_text.replace('/monto/','{:0,.2f}'.format(customer.amount))
-			message_text = message_text.replace('/pesomayor/',customer.weight_greather)
-			message_text = message_text.replace('/tipo_peso/',customer.weight_type)
+			print('VERIFICAR QUE FALLA',customer.pk)
+
+			print('VERIFICAR QUE AMOUNT',customer.amount)
+			
 			try:
+				message_text = MessagesConfiguration.objects.get(is_active=True).text
+				message_text = message_text.replace('/name/',customer.name)
+				message_text = message_text.replace('/fecha/',customer.departure_date)
+				message_text = message_text.replace('/monto/','{:0,.2f}'.format(customer.amount))
+				message_text = message_text.replace('/pesomayor/',customer.weight_greather)
+				message_text = message_text.replace('/tipo_peso/',customer.weight_type)
 				driver.get(
 					"https://web.whatsapp.com/send?phone={}&source=&data=#".format(str(customer.phone)))
 				try:
@@ -126,6 +132,7 @@ class DashboardAereoView(ListView):
 		messages.success(self.request, 'Se enviaron '+str(mensajes)+ ' mensajes',extra_tags='success')
 		driver.quit()
 	
+
 	def post(self, request):
 		if request.POST['options'] == "send_all":
 			# Get a list of not sent messages
@@ -161,7 +168,7 @@ class DashboardAereoView(ListView):
 									messages_list.name=hoja1['B'+str(i)].value
 									messages_list.phone="504"+str(hoja1['C'+str(i)].value) 
 									
-									messages_list.departure_date = hoja1['M2'].value
+									messages_list.departure_date = hoja1['J1'].value
 									messages_list.amount = hoja1['P'+str(i)].value
 									messages_list.weight_greather = hoja1['N'+str(i)].value
 									messages_list.weight_type = hoja1['M'+str(i)].value
