@@ -77,7 +77,7 @@ class DashboardAereoView(ListView):
 		sleep(10)
 		mensajes = 0
 	
-		for count,customer in enumerate(self.customer_list):
+		for count,customer in enumerate(customer_list):
 			message_text = MessagesConfiguration.objects.get(is_active=True).text
 			message_text = message_text.replace('/name/',customer.name)
 			message_text = message_text.replace('/fecha/',customer.departure_date)
