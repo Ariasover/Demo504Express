@@ -1,1 +1,1 @@
-from .messagesconf import MessagesList,MessagesConfiguration
+from .messagesconf import *

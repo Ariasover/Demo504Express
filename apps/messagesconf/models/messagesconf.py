@@ -11,22 +11,31 @@ from django.contrib import admin
 from apps.utils.models import HistoryModel
 
 class MessagesList(HistoryModel,models.Model):
-	# id_message_list = models.AutoField(db_column='IdMessage', primary_key=True)
+	id_message_list = models.AutoField(db_column='IdMessageList', primary_key=True)
 	name = models.TextField(db_column='Name', blank=True, null=True)
 	phone = models.CharField(db_column='Phone', max_length=20, blank=True, null=True)
 	message = models.TextField(db_column='Message', blank=True, null=True)
 	amount = models.FloatField(db_column='Amount', max_length=20, blank=True, null=True)
-	departure_date = models.CharField(db_column='DepartureDate',max_length=20, blank=True, null=True)
+	departure_date = models.DateField(db_column='DepartureDate', auto_now=False, auto_now_add=False)
 	weight_greather = models.CharField(db_column='WeightGreather',max_length=20, blank=True, null=True)
 	weight_type = models.CharField(db_column='WeightType',max_length=20, blank=True, null=True)
-	status = models.BooleanField(db_column='Status', blank=True, null=True,default=0)
+	status = models.ForeignKey('MessageListStatus', models.DO_NOTHING, db_column='MessagesListStatus',related_name='message_list_status')
 	creation_user = models.ForeignKey(User, models.DO_NOTHING, db_column='CreationUser',related_name='creation_user')
 	modification_user = models.ForeignKey(User, models.DO_NOTHING, db_column='ModificationUser',related_name='modification_user')
-	# messages_configuration = models.ForeignKey('MessagesConfiguration', models.DO_NOTHING, db_column='MessagesConfiguration')
 	
 	def __str__(self):
 		"""Return Name."""
 		return str(self.name)+"-"+str(self.pk)
+
+class MessageListStatus(HistoryModel,models.Model):
+	id_message_list_status = models.AutoField(db_column='IdMessageListStatus', primary_key=True)
+	description = models.CharField(db_column='Description',max_length=20, blank=True, null=True)
+	creation_user = models.ForeignKey(User, models.DO_NOTHING, db_column='CreationUser',related_name='mls_creation_user')
+	modification_user = models.ForeignKey(User, models.DO_NOTHING, db_column='ModificationUser',related_name='mls_modification_user')
+	
+	def __str__(self):
+		"""Return Name."""
+		return str(self.description)
 
 class ConfigurationType(HistoryModel,models.Model):
 	id_configuration_type= models.AutoField(db_column='IdConfigurationType', primary_key=True)
@@ -71,9 +80,10 @@ class ChromeDriverVerification(HistoryModel,models.Model):
 		"""Return Name."""
 		return str(self.version)
 
-# admin.site.register(MessagesList)
-admin.site.register(MessagesConfiguration)
+
+# admin.site.register(MessagesConfiguration)
 admin.site.register(MessagesList)
+admin.site.register(MessageListStatus)
 admin.site.register(ConfigurationType)
-admin.site.register(ErrorNumber)
-admin.site.register(ChromeDriverVerification)
+# admin.site.register(ErrorNumber)
+# admin.site.register(ChromeDriverVerification)
