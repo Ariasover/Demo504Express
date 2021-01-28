@@ -59,11 +59,9 @@ class DashboardAereoView(ListView):
 	no_of_message = 1
 	no_enviado = MessageListStatus.objects.get(description__icontains='No Enviado')
 	enviado = MessageListStatus.objects.get(description='Enviado')
-
+	error = MessageListStatus.objects.get(description__icontains='Error')
 	
 	def verify_excel(self, departure_date):
-		print('verificar excel')
-		error = MessageListStatus.objects.get(description__icontains='Error')
 		message_list = MessagesList.objects.filter(departure_date=departure_date)
 		for instance in message_list:
 			if not len(instance.phone) == 11:
@@ -73,29 +71,34 @@ class DashboardAereoView(ListView):
 				error_number.modification_user=self.request.user
 				error_number.save()
 
-				print('ENTRO')
-
-				message_list.filter(pk=instance.pk).update(status = error)
+				# Update message list with error
+				message_list.filter(pk=instance.pk).update(status = self.error)
 
 				
 
-	def get_chrome_driver(self):
-		if platform == "linux" or platform == "linux2" or platform == "darwin":
-			os.chmod(str(settings.BASE_DIR)+'/chromedriver', 755)
-			plistloc = "/Applications/Google Chrome.app/Contents/Info.plist"
-			pl = plistlib.readPlist(plistloc)
-			chrome_server_version = pl["CFBundleShortVersionString"]
-			chrome_server_version = chrome_server_version[0]+chrome_server_version[1] #for example '87' #TODO CAMBIAR ESTE METODO POR EL DE CHROMDRIVER()PARA OBTENER MEJOR LA VERSION
-			driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+'/lib/python3.7/site-packages/chromedriver_autoinstaller/'+chrome_server_version+'/chromedriver')
-		else:
-			chrome_server_version = get_chrome_version()
-			chrome_server_version = chrome_server_version[0]+chrome_server_version[1] #for example '87' #TODO CAMBIAR ESTE METODO POR EL DE CHROMDRIVER()PARA OBTENER MEJOR LA VERSION
-			driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+"\Lib\site-packages\chromedriver_autoinstaller\\"+chrome_server_version+"\chromedriver.exe")		
-		return driver
+	# def get_chrome_driver(self):
+	# 	if platform == "linux" or platform == "linux2" or platform == "darwin":
+	# 		os.chmod(str(settings.BASE_DIR)+'/chromedriver', 755)
+	# 		plistloc = "/Applications/Google Chrome.app/Contents/Info.plist"
+	# 		pl = plistlib.readPlist(plistloc)
+	# 		chrome_server_version = pl["CFBundleShortVersionString"]
+	# 		chrome_server_version = chrome_server_version[0]+chrome_server_version[1] #for example '87' #TODO CAMBIAR ESTE METODO POR EL DE CHROMDRIVER()PARA OBTENER MEJOR LA VERSION
+	# 		driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+'/lib/python3.7/site-packages/chromedriver_autoinstaller/'+chrome_server_version+'/chromedriver')
+	# 	else:
+	# 		chrome_server_version = get_chrome_version()
+	# 		chrome_server_version = chrome_server_version[0]+chrome_server_version[1] #for example '87' #TODO CAMBIAR ESTE METODO POR EL DE CHROMDRIVER()PARA OBTENER MEJOR LA VERSION
+	# 		driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+"\Lib\site-packages\chromedriver_autoinstaller\\"+chrome_server_version+"\chromedriver.exe")		
+	# 	return driver
 
 
 	def send_messages(self):
 		customer_list = MessagesList.objects.filter(status=self.no_enviado).order_by('-pk')
+		message_configuration = MessagesConfiguration.objects.get(is_active=True).text
+		message_text=""
+		xpath = '//*[@id="main"]/footer/div[1]/div[2]/div/div[2]'
+		invalid_xpath = '/html/body/div[1]/div/span[2]/div/span/div/div/div/div/div/div[2]/div/div/div'
+		time=20
+
 		if customer_list.exists():	 
 			if platform == "linux" or platform == "linux2" or platform == "darwin":
 				plistloc = "/Applications/Google Chrome.app/Contents/Info.plist"
@@ -107,56 +110,55 @@ class DashboardAereoView(ListView):
 				chrome_server_version = get_chrome_version()
 				chrome_server_version = chrome_server_version[0]+chrome_server_version[1] #for example '87' #TODO CAMBIAR ESTE METODO POR EL DE CHROMDRIVER()PARA OBTENER MEJOR LA VERSION
 				driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+"\Lib\site-packages\chromedriver_autoinstaller\\"+chrome_server_version+"\chromedriver.exe")	
+			
 			driver.get("http://web.whatsapp.com")
-			sleep(10)
-			mensajes = 0
-		
-			for count,customer in enumerate(customer_list):  
+			# sleep(5) # Cambiar si es necesario
+			text_box=""
+			for count,customer in enumerate(customer_list):
+				print('CLIENTE',customer.name,' telefono: ', customer.phone)  
 				try:
-					message_text = MessagesConfiguration.objects.get(is_active=True).text
-				
-					message_text = message_text.replace('/name/',customer.name)
+					print('MAMADO1')
+					message_text = message_configuration.replace('/name/',customer.name)
 					message_text = message_text.replace('/fecha/',str(customer.departure_date))
 					message_text = message_text.replace('/monto/','{:0,.2f}'.format(customer.amount))
 					message_text = message_text.replace('/pesomayor/',customer.weight_greather)
 					message_text = message_text.replace('/tipo_peso/',customer.weight_type)
 					driver.get(
 						"https://web.whatsapp.com/send?phone={}&source=&data=#".format(str(customer.phone)))
+					# TODO
 					try:
+						print('MAMADO2')
 						driver.switch_to_alert().accept()
+						print('MAMADO3')
 					except Exception as e:
-						print('Error',e)
-					xpath = '//*[@id="main"]/footer/div[1]/div[2]/div/div[2]'
-					time=30
-					WebDriverWait(driver, time).until(EC.presence_of_element_located((By.XPATH, xpath)))
-					txt_box = driver.find_element(
-					By.XPATH, '//*[@id="main"]/footer/div[1]/div[2]/div/div[2]')
-					global no_of_message
-					for part in message_text.split('\n'):
-						txt_box.send_keys(part)
-						ActionChains(driver).key_down(Keys.SHIFT).key_down(Keys.ENTER).key_up(Keys.SHIFT).key_up(Keys.ENTER).perform()
-					ActionChains(driver).send_keys(Keys.RETURN).perform()
+						print('Error',e)					
+					sleep(5)
 
-					sleep(3)
-					customer_list.filter(pk=customer.pk).update(status = self.enviado) #Todo
-					print('MENSAJE',count+1)
-					print('Estado Actualizado')
-					mensajes = count+1  
+					print('MAMADO4')
+					invalid_number_popup = driver.find_elements_by_xpath(invalid_xpath)
+					if not invalid_number_popup:
+						
+						WebDriverWait(driver, time).until(EC.presence_of_element_located((By.XPATH, xpath)))
+						text_box=driver.find_element(By.XPATH, xpath)
+						
+						for part in message_text.split('\n'):
+							text_box.send_keys(part)
+							ActionChains(driver).key_down(Keys.SHIFT).key_down(Keys.ENTER).key_up(Keys.SHIFT).key_up(Keys.ENTER).perform()
+						ActionChains(driver).send_keys(Keys.RETURN).perform()
+						customer_list.filter(pk=customer.pk).update(status = self.enviado) #Todo
+						print('Enviado',count+1)
+					print('MAMADO5')
 				except Exception as e:
-					print('SEND WHA===',e)
-					# Save if number was bad
+					print('Not sent ===',e)
+
 					if not ErrorNumber.objects.filter(message_list=customer).exists():	
-						mensajes = mensajes-1
 						error = ErrorNumber()
 						error.message_list = customer
 						error.creation_user=self.request.user
 						error.modification_user=self.request.user
 						error.save()
-						messages.success(self.request, 'El número de teléfono ' +str(customer.phone)+ ' es incorrecto.',extra_tags='error')
-
-
-				# break #TODO ESTE BREAK SIRVE PARA PODER ENVIAR SOLAMENTE UN MENSAJE
-			messages.success(self.request, 'Se enviaron '+str(mensajes)+ ' mensajes',extra_tags='success')
+				continue
+			messages.success(self.request, 'Mensajes enviados',extra_tags='success')
 			driver.quit()
 		else:
 			messages.error(self.request, 'No hay destinatarios',extra_tags='error')
@@ -243,8 +245,7 @@ class SpeechConfigurationView(ListView):
 	template_name = 'speech_configuration.html'
 	queryset = MessagesConfiguration.objects.filter()
 	paginate_by = 5
-	no_of_message = 2
-	
+
 	def post(self,request):
 		print('hice post')
 		if request.POST['options'] == "activate":
