@@ -119,6 +119,7 @@ class DashboardAereoView(ListView):
 			# sleep(5) # Cambiar si es necesario
 			text_box=""
 			for count,customer in enumerate(customer_list):
+    				
 				print('CLIENTE',customer.name,' telefono: ', customer.phone)  
 				try:
 					print('MAMADO1')
@@ -152,8 +153,7 @@ class DashboardAereoView(ListView):
 						ActionChains(driver).send_keys(Keys.RETURN).perform()
 						customer_list.filter(pk=customer.pk).update(status = self.enviado) #Todo
 						print('Enviado',count+1)
-					if count == 20 or count == 40 or count == 60 or count == 80 or count == 100 or count ==120:
-						sleep(2)
+					
 					else:	
 						error = ErrorNumber()
 						error.message_list = customer
@@ -170,6 +170,7 @@ class DashboardAereoView(ListView):
 					# 	error.creation_user=self.request.user
 					# 	error.modification_user=self.request.user
 					# 	error.save()
+				sleep(3)
 				continue
 			messages.success(self.request, 'Mensajes enviados',extra_tags='success')
 			driver.quit()
