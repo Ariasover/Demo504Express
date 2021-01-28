@@ -93,6 +93,9 @@ class DashboardAereoView(ListView):
 
 	def send_messages(self):
 		customer_list = MessagesList.objects.filter(status=self.no_enviado).order_by('-pk')
+
+		# Verificar que la lista de clientes excluya los clientes que estan en errores
+		
 		message_configuration = MessagesConfiguration.objects.get(is_active=True).text
 		message_text=""
 		xpath = '//*[@id="main"]/footer/div[1]/div[2]/div/div[2]'
@@ -136,27 +139,34 @@ class DashboardAereoView(ListView):
 
 					print('MAMADO4')
 					invalid_number_popup = driver.find_elements_by_xpath(invalid_xpath)
+
 					if not invalid_number_popup:
-						
+						print('MAMADO5')
 						WebDriverWait(driver, time).until(EC.presence_of_element_located((By.XPATH, xpath)))
 						text_box=driver.find_element(By.XPATH, xpath)
-						
+						print('MAMADO6')
 						for part in message_text.split('\n'):
 							text_box.send_keys(part)
 							ActionChains(driver).key_down(Keys.SHIFT).key_down(Keys.ENTER).key_up(Keys.SHIFT).key_up(Keys.ENTER).perform()
 						ActionChains(driver).send_keys(Keys.RETURN).perform()
 						customer_list.filter(pk=customer.pk).update(status = self.enviado) #Todo
 						print('Enviado',count+1)
-					print('MAMADO5')
-				except Exception as e:
-					print('Not sent ===',e)
-
-					if not ErrorNumber.objects.filter(message_list=customer).exists():	
+					else:	
 						error = ErrorNumber()
 						error.message_list = customer
 						error.creation_user=self.request.user
 						error.modification_user=self.request.user
 						error.save()
+							
+				except Exception as e:
+					print('NOT SENT ===',e)
+
+					# if not ErrorNumber.objects.filter(message_list=customer).exists():	
+					# 	error = ErrorNumber()
+					# 	error.message_list = customer
+					# 	error.creation_user=self.request.user
+					# 	error.modification_user=self.request.user
+					# 	error.save()
 				continue
 			messages.success(self.request, 'Mensajes enviados',extra_tags='success')
 			driver.quit()
