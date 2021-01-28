@@ -85,7 +85,8 @@ class DashboardAereoView(ListView):
 	# 		chrome_server_version = chrome_server_version[0]+chrome_server_version[1] #for example '87' #TODO CAMBIAR ESTE METODO POR EL DE CHROMDRIVER()PARA OBTENER MEJOR LA VERSION
 	# 		driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+'/lib/python3.7/site-packages/chromedriver_autoinstaller/'+chrome_server_version+'/chromedriver')
 	# 	else:
-	# 		chrome_server_version = get_chrome_version()
+	# 		chrome_server_version = get_chrome_version
+	# ()
 	# 		chrome_server_version = chrome_server_version[0]+chrome_server_version[1] #for example '87' #TODO CAMBIAR ESTE METODO POR EL DE CHROMDRIVER()PARA OBTENER MEJOR LA VERSION
 	# 		driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+"\Lib\site-packages\chromedriver_autoinstaller\\"+chrome_server_version+"\chromedriver.exe")		
 	# 	return driver
@@ -139,7 +140,7 @@ class DashboardAereoView(ListView):
 
 					print('MAMADO4')
 					invalid_number_popup = driver.find_elements_by_xpath(invalid_xpath)
-
+					print('encontro el popup',invalid_number_popup)
 					if not invalid_number_popup:
 						print('MAMADO5')
 						WebDriverWait(driver, time).until(EC.presence_of_element_located((By.XPATH, xpath)))
@@ -157,7 +158,7 @@ class DashboardAereoView(ListView):
 						error.creation_user=self.request.user
 						error.modification_user=self.request.user
 						error.save()
-							
+
 				except Exception as e:
 					print('NOT SENT ===',e)
 
