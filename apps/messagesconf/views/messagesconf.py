@@ -152,6 +152,8 @@ class DashboardAereoView(ListView):
 						ActionChains(driver).send_keys(Keys.RETURN).perform()
 						customer_list.filter(pk=customer.pk).update(status = self.enviado) #Todo
 						print('Enviado',count+1)
+					if count == 20 or count == 40 or count == 60 or count == 80 or count == 100 or count ==120:
+						sleep(2)
 					else:	
 						error = ErrorNumber()
 						error.message_list = customer
