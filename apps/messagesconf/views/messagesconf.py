@@ -37,6 +37,7 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 
 # Local
@@ -74,24 +75,6 @@ class DashboardAereoView(ListView):
 				# Update message list with error
 				message_list.filter(pk=instance.pk).update(status = self.error)
 
-				
-
-	# def get_chrome_driver(self):
-	# 	if platform == "linux" or platform == "linux2" or platform == "darwin":
-	# 		os.chmod(str(settings.BASE_DIR)+'/chromedriver', 755)
-	# 		plistloc = "/Applications/Google Chrome.app/Contents/Info.plist"
-	# 		pl = plistlib.readPlist(plistloc)
-	# 		chrome_server_version = pl["CFBundleShortVersionString"]
-	# 		chrome_server_version = chrome_server_version[0]+chrome_server_version[1] #for example '87' #TODO CAMBIAR ESTE METODO POR EL DE CHROMDRIVER()PARA OBTENER MEJOR LA VERSION
-	# 		driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+'/lib/python3.7/site-packages/chromedriver_autoinstaller/'+chrome_server_version+'/chromedriver')
-	# 	else:
-	# 		chrome_server_version = get_chrome_version
-	# ()
-	# 		chrome_server_version = chrome_server_version[0]+chrome_server_version[1] #for example '87' #TODO CAMBIAR ESTE METODO POR EL DE CHROMDRIVER()PARA OBTENER MEJOR LA VERSION
-	# 		driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+"\Lib\site-packages\chromedriver_autoinstaller\\"+chrome_server_version+"\chromedriver.exe")		
-	# 	return driver
-
-
 	def send_messages(self):
 		customer_list = MessagesList.objects.filter(status=self.no_enviado).order_by('-pk')
 
@@ -111,10 +94,11 @@ class DashboardAereoView(ListView):
 				chrome_server_version = chrome_server_version[0]+chrome_server_version[1] #for example '87' #TODO CAMBIAR ESTE METODO POR EL DE CHROMDRIVER()PARA OBTENER MEJOR LA VERSION
 				driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+'/lib/python3.7/site-packages/chromedriver_autoinstaller/'+chrome_server_version+'/chromedriver')
 			else:
-				chrome_server_version = get_chrome_version()
-				chrome_server_version = chrome_server_version[0]+chrome_server_version[1] #for example '87' #TODO CAMBIAR ESTE METODO POR EL DE CHROMDRIVER()PARA OBTENER MEJOR LA VERSION
-				driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+"\Lib\site-packages\chromedriver_autoinstaller\\"+chrome_server_version+"\chromedriver.exe")	
-			
+				
+				driver = webdriver.Remote(
+   					command_executor='http://localhost:4444/wd/hub',
+   					desired_capabilities=DesiredCapabilities.CHROME)
+				
 			driver.get("http://web.whatsapp.com")
 			# sleep(5) # Cambiar si es necesario
 			text_box=""
