@@ -8,8 +8,10 @@ from django.shortcuts import render,get_object_or_404
 from django.conf import settings
 from django.urls import reverse
 from django.views.generic import ListView,UpdateView,CreateView,DeleteView
+from django.views.generic.edit import FormView
 from django.contrib import messages
 from django.db import transaction
+
 
 
 # Models
@@ -21,7 +23,8 @@ from apps.utils.chrome_version import get_chrome_version
 
 
 # Forms
-from ..forms import MessagesConfigurationForm
+from ..forms import MessagesConfigurationForm, OneMessageForm
+
 
 
 # Openpyxl
@@ -103,7 +106,7 @@ class DashboardAereoView(ListView):
 			# sleep(5) # Cambiar si es necesario
 			text_box=""
 			for count,customer in enumerate(customer_list):
-    				
+					
 				print('CLIENTE',customer.name,' telefono: ', customer.phone)  
 				try:
 					print('MAMADO1')
@@ -293,3 +296,103 @@ class SpeechDeleteView(DeleteView):
 
 	def get_success_url(self):
 		return reverse('messagesconf:speech_configuration')
+
+
+	
+class OneMessageView(FormView):
+	model = MessagesList 
+	template_name = 'one_message.html'
+	form_class = OneMessageForm
+	# success_url = '/thanks/'
+	def send_message(self,phone,message):	
+		message_text=message
+		xpath = '//*[@id="main"]/footer/div[1]/div[2]/div/div[2]'
+		invalid_xpath = '/html/body/div[1]/div/span[2]/div/span/div/div/div/div/div/div[2]/div/div/div'
+		time=20
+		try:
+			if platform == "linux" or platform == "linux2" or platform == "darwin":
+				plistloc = "/Applications/Google Chrome.app/Contents/Info.plist"
+				pl = plistlib.readPlist(plistloc)
+				chrome_server_version = pl["CFBundleShortVersionString"]
+				chrome_server_version = chrome_server_version[0]+chrome_server_version[1] #for example '87' #TODO CAMBIAR ESTE METODO POR EL DE CHROMDRIVER()PARA OBTENER MEJOR LA VERSION
+				driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+'/lib/python3.7/site-packages/chromedriver_autoinstaller/'+chrome_server_version+'/chromedriver')
+			else:
+				driver = webdriver.Remote(
+					command_executor='http://localhost:4444/wd/hub',
+					desired_capabilities=DesiredCapabilities.CHROME)
+				
+			driver.get("http://web.whatsapp.com")
+			# sleep(5) # Cambiar si es necesario
+			text_box=""
+
+
+			driver.get("https://web.whatsapp.com/send?phone={}&source=&data=#".format(str(phone)))
+				# TODO
+			try:
+				print('MAMADO2')
+				driver.switch_to_alert().accept()
+				print('MAMADO3')
+			except Exception as e:
+				print('Error',e)					
+			sleep(5)
+
+			invalid_number_popup = driver.find_elements_by_xpath(invalid_xpath)
+			if not invalid_number_popup:
+				WebDriverWait(driver, time).until(EC.presence_of_element_located((By.XPATH, xpath)))
+				text_box=driver.find_element(By.XPATH, xpath)
+				for part in message_text.split('\n'):
+					text_box.send_keys(part)
+					ActionChains(driver).key_down(Keys.SHIFT).key_down(Keys.ENTER).key_up(Keys.SHIFT).key_up(Keys.ENTER).perform()
+				ActionChains(driver).send_keys(Keys.RETURN).perform()
+				messages.success(self.request, 'Mensaje enviado',extra_tags='success')
+				# customer_list.filter(pk=customer.pk).update(status = self.enviado) #Todo
+			else:	
+				messages.error(self.request, 'Mensaje no enviado',extra_tags='error')
+
+		except Exception as e:
+			print('NOT SENT ===',e)
+			messages.error(self.request, 'Mensaje no enviado',extra_tags='error')
+			# if not ErrorNumber.objects.filter(message_list=customer).exists():	
+			# 	error = ErrorNumber()
+			# 	error.message_list = customer
+			# 	error.creation_user=self.request.user
+			# 	error.modification_user=self.request.user
+			# 	error.save()
+		sleep(3)
+		
+		driver.quit()
+
+			
+    		
+
+	def get_success_url(self):
+		return reverse('messagesconf:one_message')
+
+
+	def form_valid(self, form):
+		self.object = form.save(commit=False)
+		self.object.creation_user = self.request.user
+		self.object.modification_user = self.request.user
+		self.object.status = MessageListStatus.objects.get(description='Enviado')
+		self.object.amount = 0
+		self.object.departure_date = datetime.datetime.now()
+		self.object.weight_greather = 0
+		self.object.weight_type = 0
+		self.object.save()
+		phone = self.object.phone
+		message = self.object.message
+
+		print('===============PHONEEE=======',self.object.phone)
+		self.send_message(phone,message)
+
+
+		
+
+
+
+		return HttpResponseRedirect(self.get_success_url())
+	# def form_valid(self, form):
+	#     # This method is called when valid form data has been POSTed.
+	#     # It should return an HttpResponse.
+	#     form.send_email()
+	#     return super().form_valid(form)

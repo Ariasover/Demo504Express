@@ -47,6 +47,9 @@
                         <a href="{% url 'messagesconf:dashboard_aereo' %}"><i class="fa fa-plane"></i> <span class="nav-label">Para Aéreos</span></a>
                     </li>
                 {% endif %}
+                    <li>
+                        <a href="{% url 'messagesconf:one_message' %}"><i class="fa fa-whatsapp"></i> <span class="nav-label">Mensaje individual</span></a>
+                    </li>
 
                 {% comment %} {% if request.user|has_group:"maritimo" %} 
                     <li>
@@ -83,7 +86,7 @@
 
             </nav>
         </div>
-        <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="wrapper wrapper-content">
             {% block content %}
             {% endblock %}
         </div>
