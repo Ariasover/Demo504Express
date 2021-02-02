@@ -108,9 +108,9 @@ class DashboardAereoView(ListView):
 			text_box=""
 			startTime = tiempo.time()
 			for count,customer in enumerate(customer_list):
-				# if count == 20:
-				# 	break
-				print('CLIENTE',customer.name,' telefono: ', customer.phone)  
+				if count == 20:
+					break
+				# print('CLIENTE',customer.name,' telefono: ', customer.phone)  
 				try:
 					message_text = message_configuration.replace('/name/',customer.name)
 					message_text = message_text.replace('/fecha/',str(customer.departure_date))
@@ -120,11 +120,11 @@ class DashboardAereoView(ListView):
 					driver.get(
 						"https://web.whatsapp.com/send?phone={}&source=&data=#".format(str(customer.phone)))
 					# TODO
-					try:
-						driver.switch_to_alert().accept()
-					except Exception as e:
-						print('Error',e)					
-					sleep(5)
+					# try:
+					# 	driver.switch_to_alert().accept()
+					# except Exception as e:
+					# 	print('Error',e)					
+					sleep(2)
 
 					
 					invalid_number_popup = driver.find_elements_by_xpath(invalid_xpath)
