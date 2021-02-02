@@ -48,6 +48,7 @@ import socket,os,plistlib,datetime
 from pathlib import Path
 from sys import platform
 from time import sleep
+import time as tiempo
 
 
 
@@ -103,13 +104,14 @@ class DashboardAereoView(ListView):
    					desired_capabilities=DesiredCapabilities.CHROME)
 				
 			driver.get("http://web.whatsapp.com")
-			# sleep(5) # Cambiar si es necesario
+			sleep(5) # Cambiar si es necesario
 			text_box=""
+			startTime = tiempo.time()
 			for count,customer in enumerate(customer_list):
-					
+				# if count == 20:
+				# 	break
 				print('CLIENTE',customer.name,' telefono: ', customer.phone)  
 				try:
-					print('MAMADO1')
 					message_text = message_configuration.replace('/name/',customer.name)
 					message_text = message_text.replace('/fecha/',str(customer.departure_date))
 					message_text = message_text.replace('/monto/','{:0,.2f}'.format(customer.amount))
@@ -119,27 +121,22 @@ class DashboardAereoView(ListView):
 						"https://web.whatsapp.com/send?phone={}&source=&data=#".format(str(customer.phone)))
 					# TODO
 					try:
-						print('MAMADO2')
 						driver.switch_to_alert().accept()
-						print('MAMADO3')
 					except Exception as e:
 						print('Error',e)					
 					sleep(5)
 
-					print('MAMADO4')
+					
 					invalid_number_popup = driver.find_elements_by_xpath(invalid_xpath)
-					print('encontro el popup',invalid_number_popup)
 					if not invalid_number_popup:
-						print('MAMADO5')
 						WebDriverWait(driver, time).until(EC.presence_of_element_located((By.XPATH, xpath)))
 						text_box=driver.find_element(By.XPATH, xpath)
-						print('MAMADO6')
 						for part in message_text.split('\n'):
 							text_box.send_keys(part)
 							ActionChains(driver).key_down(Keys.SHIFT).key_down(Keys.ENTER).key_up(Keys.SHIFT).key_up(Keys.ENTER).perform()
 						ActionChains(driver).send_keys(Keys.RETURN).perform()
 						customer_list.filter(pk=customer.pk).update(status = self.enviado) #Todo
-						print('Enviado',count+1)
+						# print('Enviado',count+1)
 					
 					else:	
 						error = ErrorNumber()
@@ -157,8 +154,12 @@ class DashboardAereoView(ListView):
 					# 	error.creation_user=self.request.user
 					# 	error.modification_user=self.request.user
 					# 	error.save()
-				sleep(3)
+				sleep(5)
+			
 				continue
+			endTime = tiempo.time()
+			elapsedTime = endTime - startTime
+			print("Elapsed Time = %s" % elapsedTime)
 			messages.success(self.request, 'Mensajes enviados',extra_tags='success')
 			driver.quit()
 		else:
