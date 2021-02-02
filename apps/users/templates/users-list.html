@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load static %} 
+{% block title %}
+Usuarios
+{% endblock title %}
+{% block content %}
+    <div class="row">
+		<div class="col-lg-12">
+			<div class="text-center m-t-lg">
+				<h1>
+					Listado de usuarios 
+				</h1>
+			   
+			</div>
+		</div>
+	</div>
+
+
+    <div class="row">
+		<div class="col-lg-12">
+			<div class="ibox-content">
+                <a href="" class="btn btn-primary btn-sm btn-block ">Crear usuario</a>
+                <br>
+                <br>
+				<div class="table-responsive">
+					<table id="tblUsuarios" class="display nowrap table table-hover table-striped" cellspacing="0" width="100%">
+						<thead>
+							<tr>
+								<th>Nombre</th>
+								<th>Correo</th>
+								<th>Estado</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for x in users_list %}
+								<tr>
+									<td align="center">{{x.username}}</td>
+									<td>{{x.mail}}</td>
+                                    <td>{{x.}}</td>
+									<td align="center">
+                                        
+                                            <form method="post" enctype="multipart/form-data">
+                                                {% csrf_token %}
+                                                {% if x.is_active == 1 %}
+                                                    <input type="hidden" name="options" value="deactivate">                                             
+                                                    <input type="hidden" name="pk" value="{{x.pk}}">
+                                                    <button type="submit" class="btn btn-success btn-sm">desactivar</button>
+   
+                                                {% else %}
+                                                    <input type="hidden" name="options" value="activate">                                             
+                                                    <input type="hidden" name="pk" value="{{x.pk}}">
+                                                    <button type="submit" class="btn btn-primary btn-sm">Activar</button>
+
+   
+                                                {% endif %}
+                                                                                          
+                                            </form>
+
+                                        {% comment %} <a href="{% url 'messagesconf:edit_speech' x.pk %}" class="btn btn-primary btn-sm">Editar</a> {% endcomment %}
+                                        <!-- <button type="submit" class="btn btn-success btn-sm">Usar</button> -->
+
+									</td>
+                                    
+									<td align="center">
+                                        <a href="{% url 'messagesconf:update_speech_configuration' x.pk %}" class="btn btn-warning btn-sm">Editar</a>
+									</td>
+									<td align="center">
+                                        <a href="{% url 'messagesconf:delete_speech_configuration' x.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
+									</td>
+                                
+								</tr>
+							{% endfor %}
+							
+						</tbody>
+					</table>
+					
+
+					<div class="pagination">
+						<span class="page-links">
+							{% if page_obj.has_previous %}
+								<a href="/messages/dashboard?page={{ page_obj.previous_page_number }}">previous</a>
+							{% endif %}
+							<span class="page-current">
+								Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+							</span>
+							{% if page_obj.has_next %}
+								<a href="/messages/dashboard?page={{ page_obj.next_page_number }}">next</a>
+							{% endif %}
+						</span>
+					</div>
+					<br>
+
+					
+
+				</div>  
+			</div>
+					
+		</div>
+	</div>
+{% endblock content %}
+ 
+{% block javascript %}
+
+{% endblock %}
