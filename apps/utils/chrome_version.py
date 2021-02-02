@@ -34,6 +34,7 @@ def get_chrome_version():
 		process = subprocess.Popen(['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', '--version'], stdout=subprocess.PIPE)
 		version = process.communicate()[0].decode('UTF-8').replace('Google Chrome', '').strip()
 	elif platform == 'win':
+        
 		process = subprocess.Popen(
 			['reg', 'query', 'HKEY_CURRENT_USER\\Software\\Google\\Chrome\\BLBeacon', '/v', 'version'],
 			stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL
