@@ -155,7 +155,7 @@ class DashboardAereoView(ListView):
 					# 	error.modification_user=self.request.user
 					# 	error.save()
 				
-				if count == 20:
+				if count == 15:
 					break
 				continue
 			endTime = tiempo.time()
