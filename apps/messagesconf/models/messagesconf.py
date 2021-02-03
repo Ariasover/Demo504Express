@@ -16,7 +16,7 @@ class MessagesList(HistoryModel,models.Model):
 	phone = models.CharField(db_column='Phone', max_length=20, blank=True, null=True)
 	message = models.TextField(db_column='Message', blank=True, null=True)
 	amount = models.FloatField(db_column='Amount', max_length=20, blank=True, null=True)
-	departure_date = models.DateField(db_column='DepartureDate', auto_now=False, auto_now_add=False)
+	departure_date = models.CharField(db_column='DepartureDate', max_length=20, blank=True, null=True)
 	weight_greather = models.CharField(db_column='WeightGreather',max_length=20, blank=True, null=True)
 	weight_type = models.CharField(db_column='WeightType',max_length=20, blank=True, null=True)
 	status = models.ForeignKey('MessageListStatus', models.DO_NOTHING, db_column='MessagesListStatus',related_name='message_list_status')

@@ -108,8 +108,7 @@ class DashboardAereoView(ListView):
 			text_box=""
 			startTime = tiempo.time()
 			for count,customer in enumerate(customer_list):
-				if count == 20:
-					break
+				
 				# print('CLIENTE',customer.name,' telefono: ', customer.phone)  
 				try:
 					message_text = message_configuration.replace('/name/',customer.name)
@@ -120,10 +119,10 @@ class DashboardAereoView(ListView):
 					driver.get(
 						"https://web.whatsapp.com/send?phone={}&source=&data=#".format(str(customer.phone)))
 					# TODO
-					# try:
-					# 	driver.switch_to_alert().accept()
-					# except Exception as e:
-					# 	print('Error',e)					
+					try:
+						driver.switch_to_alert().accept()
+					except Exception as e:
+						print('Error',e)					
 					sleep(2)
 
 					
@@ -154,8 +153,9 @@ class DashboardAereoView(ListView):
 					# 	error.creation_user=self.request.user
 					# 	error.modification_user=self.request.user
 					# 	error.save()
-				sleep(5)
-			
+				
+				if count == 20:
+					break
 				continue
 			endTime = tiempo.time()
 			elapsedTime = endTime - startTime
@@ -188,8 +188,8 @@ class DashboardAereoView(ListView):
 								mayor=mayor+1
 							else:
 								break
-						departure_date = datetime.datetime.strptime(str(hoja1['J1'].value), '%Y-%m-%d %H:%M:%S')		
-						departure_date = departure_date.date()
+						departure_date = str(hoja1['M2'].value)		
+						# departure_date = departure_date.date()
 
 						for i in range (4, mayor+4):	
 							if not hoja1['N'+str(i)].value == '#VALUE!' or not hoja1['N'+str(i)].value == '#N/A':
@@ -364,7 +364,7 @@ class OneMessageView(FormView):
 		driver.quit()
 
 			
-    		
+			
 
 	def get_success_url(self):
 		return reverse('messagesconf:one_message')
