@@ -49,6 +49,7 @@ from pathlib import Path
 from sys import platform
 from time import sleep
 import time as tiempo
+import re
 
 
 
@@ -196,7 +197,11 @@ class DashboardAereoView(ListView):
 								if  not hoja1['C'+str(i)].value == None:
 									messages_list = MessagesList()
 									messages_list.name=hoja1['B'+str(i)].value
-									messages_list.phone="504"+str(hoja1['C'+str(i)].value) 
+
+									# validate phone
+									phone = "504"+str(hoja1['C'+str(i)].value).replace(" ","") 
+									phone = re.sub('[\.-]','', phone)
+									messages_list.phone = phone
 
 
 									messages_list.departure_date = departure_date

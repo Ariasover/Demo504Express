@@ -85,5 +85,5 @@ class ChromeDriverVerification(HistoryModel,models.Model):
 admin.site.register(MessagesList)
 admin.site.register(MessageListStatus)
 admin.site.register(ConfigurationType)
-# admin.site.register(ErrorNumber)
+admin.site.register(ErrorNumber)
 # admin.site.register(ChromeDriverVerification)
