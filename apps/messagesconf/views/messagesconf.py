@@ -131,12 +131,13 @@ class DashboardAereoView(ListView):
 					if not invalid_number_popup:
 						WebDriverWait(driver, time).until(EC.presence_of_element_located((By.XPATH, xpath)))
 						text_box=driver.find_element(By.XPATH, xpath)
+
 						for part in message_text.split('\n'):
 							text_box.send_keys(part)
 							ActionChains(driver).key_down(Keys.SHIFT).key_down(Keys.ENTER).key_up(Keys.SHIFT).key_up(Keys.ENTER).perform()
 						ActionChains(driver).send_keys(Keys.RETURN).perform()
 						customer_list.filter(pk=customer.pk).update(status = self.enviado) #Todo
-						# print('Enviado',count+1)
+						print('Enviado',count+1)
 					
 					else:	
 						error = ErrorNumber()
@@ -346,7 +347,8 @@ class OneMessageView(FormView):
 			if not invalid_number_popup:
 				WebDriverWait(driver, time).until(EC.presence_of_element_located((By.XPATH, xpath)))
 				text_box=driver.find_element(By.XPATH, xpath)
-				for part in message_text.split('\n'):
+				message_text = message_text.split('\n')
+				for part in message_text:
 					text_box.send_keys(part)
 					ActionChains(driver).key_down(Keys.SHIFT).key_down(Keys.ENTER).key_up(Keys.SHIFT).key_up(Keys.ENTER).perform()
 				ActionChains(driver).send_keys(Keys.RETURN).perform()
