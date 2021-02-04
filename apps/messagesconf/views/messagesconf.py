@@ -105,7 +105,7 @@ class DashboardAereoView(ListView):
    					desired_capabilities=DesiredCapabilities.CHROME)
 				
 			driver.get("http://web.whatsapp.com")
-			sleep(5) # Cambiar si es necesario
+			# sleep(5) # Cambiar si es necesario
 			text_box=""
 			startTime = tiempo.time()
 			for count,customer in enumerate(customer_list):
@@ -155,7 +155,7 @@ class DashboardAereoView(ListView):
 					# 	error.modification_user=self.request.user
 					# 	error.save()
 				
-				if count == 15:
+				if count == 19:
 					break
 				continue
 			endTime = tiempo.time()
