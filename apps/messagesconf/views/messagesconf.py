@@ -63,6 +63,8 @@ class DashboardAereoView(ListView):
 	queryset = MessagesList.objects.all()
 	paginate_by = 5
 	no_of_message = 1
+
+	# Status
 	no_enviado = MessageListStatus.objects.get(description__icontains='No Enviado')
 	enviado = MessageListStatus.objects.get(description='Enviado')
 	error = MessageListStatus.objects.get(description__icontains='Error')
@@ -70,27 +72,30 @@ class DashboardAereoView(ListView):
 	def verify_excel(self, departure_date):
 		message_list = MessagesList.objects.filter(departure_date=departure_date)
 		for instance in message_list:
+    			
 			if not len(instance.phone) == 11:
-				error_number = ErrorNumber()
-				error_number.message_list = instance
-				error_number.creation_user=self.request.user
-				error_number.modification_user=self.request.user
-				error_number.save()
+				phone = re.sub('[\.-]','', instance.phone)
+				message_list.filter(pk=instance.pk).update(phone = phone)
+				# error_number = ErrorNumber()
+				# error_number.message_list = instance
+				# error_number.creation_user=self.request.user
+				# error_number.modification_user=self.request.user
+				# error_number.save()
 
 				# Update message list with error
-				message_list.filter(pk=instance.pk).update(status = self.error)
+				# message_list.filter(pk=instance.pk).update(status = self.error)
+
 
 	def send_messages(self):
-		customer_list = MessagesList.objects.filter(status=self.no_enviado).order_by('-pk')
-
-		# Verificar que la lista de clientes excluya los clientes que estan en errores
-		
+    	# Configuration
+		customer_list = MessagesList.objects.filter(status=self.no_enviado).values('pk','name','phone', 'message','amount','departure_date','weight_greather','weight_type')		
 		message_configuration = MessagesConfiguration.objects.get(is_active=True).text
 		message_text=""
 		xpath = '//*[@id="main"]/footer/div[1]/div[2]/div/div[2]'
 		invalid_xpath = '/html/body/div[1]/div/span[2]/div/span/div/div/div/div/div/div[2]/div/div/div'
 		time=20
 
+		# Loop over customer
 		if customer_list.exists():	 
 			if platform == "linux" or platform == "linux2" or platform == "darwin":
 				plistloc = "/Applications/Google Chrome.app/Contents/Info.plist"
@@ -109,36 +114,30 @@ class DashboardAereoView(ListView):
 			text_box=""
 			startTime = tiempo.time()
 			for count,customer in enumerate(customer_list):
-				
-				# print('CLIENTE',customer.name,' telefono: ', customer.phone)  
 				try:
-					message_text = message_configuration.replace('/name/',customer.name)
-					message_text = message_text.replace('/fecha/',str(customer.departure_date))
-					message_text = message_text.replace('/monto/','{:0,.2f}'.format(customer.amount))
-					message_text = message_text.replace('/pesomayor/',customer.weight_greather)
-					message_text = message_text.replace('/tipo_peso/',customer.weight_type)
-					driver.get(
-						"https://web.whatsapp.com/send?phone={}&source=&data=#".format(str(customer.phone)))
-					# TODO
+					message_text = message_configuration.replace('/name/',customer['name'])
+					message_text = message_text.replace('/fecha/',str(customer['departure_date']))
+					message_text = message_text.replace('/monto/','{:0,.2f}'.format(customer['amount']))
+					message_text = message_text.replace('/pesomayor/',customer['weight_greather'])
+					message_text = message_text.replace('/tipo_peso/',customer['weight_type'])
+					driver.get("https://web.whatsapp.com/send?phone={}&source=&data=#".format(str(customer['phone'])))
+					
 					try:
 						driver.switch_to_alert().accept()
 					except Exception as e:
-						print('Error',e)					
-					sleep(2)
-
-					
+						print('Error',e)
+										
 					invalid_number_popup = driver.find_elements_by_xpath(invalid_xpath)
 					if not invalid_number_popup:
 						WebDriverWait(driver, time).until(EC.presence_of_element_located((By.XPATH, xpath)))
 						text_box=driver.find_element(By.XPATH, xpath)
-
 						for part in message_text.split('\n'):
 							text_box.send_keys(part)
 							ActionChains(driver).key_down(Keys.SHIFT).key_down(Keys.ENTER).key_up(Keys.SHIFT).key_up(Keys.ENTER).perform()
 						ActionChains(driver).send_keys(Keys.RETURN).perform()
-						customer_list.filter(pk=customer.pk).update(status = self.enviado) #Todo
-						print('Enviado',count+1)
-					
+
+						# Update SENT
+						customer_list.filter(pk=customer['pk']).update(status = self.enviado)					
 					else:	
 						error = ErrorNumber()
 						error.message_list = customer
@@ -167,9 +166,9 @@ class DashboardAereoView(ListView):
 		else:
 			messages.error(self.request, 'No hay destinatarios',extra_tags='error')
 
+
 	def post(self, request):
 		if request.POST['options'] == "send_all":
-			# Get a list of not sent messages
 			self.send_messages()
 		elif request.POST['options'] == 'upload_excel':
 			try: 
@@ -200,11 +199,7 @@ class DashboardAereoView(ListView):
 									messages_list.name=hoja1['B'+str(i)].value
 
 									# validate phone
-									phone = "504"+str(hoja1['C'+str(i)].value).replace(" ","") 
-									phone = re.sub('[\.-]','', phone)
-									messages_list.phone = phone
-
-
+									messages_list.phone = "504"+str(hoja1['C'+str(i)].value)
 									messages_list.departure_date = departure_date
 									messages_list.amount = hoja1['P'+str(i)].value
 									messages_list.weight_greather = hoja1['N'+str(i)].value
@@ -229,19 +224,12 @@ class DashboardAereoView(ListView):
 	
 
 	def get_context_data(self, **kwargs):
-		no_enviados = MessageListStatus.objects.get(description__icontains='No Enviado')
 		context = super().get_context_data(**kwargs)
-		not_sent_messages= self.queryset.filter(status=no_enviados)[:5]
-		quantity_not_sent= len(self.queryset.filter(status=no_enviados))
-
-		sent_messages= self.queryset.filter(status=1)
-		quantity_sent= len(sent_messages)
-
+		not_sent_messages= self.queryset.filter(status=self.no_enviado)[:5]
+		quantity_not_sent= len(self.queryset.filter(status=self.no_enviado))
 		context.update({
-			'sent_messages': sent_messages[:5],
 			'not_sent_messages': not_sent_messages,
 			'quantity_not_sent':quantity_not_sent,
-		 	'quantity_sent':quantity_sent
 		})		
 		return context
 
@@ -255,10 +243,7 @@ class SpeechConfigurationView(ListView):
 	paginate_by = 5
 
 	def post(self,request):
-		print('hice post')
 		if request.POST['options'] == "activate":
-			# SEND MESSAGES
-			# DESACTIVAR LAS QUE ESTAN ACTIVAS
 			MessagesConfiguration.objects.all().update(is_active=False)
 			messages_configuration = MessagesConfiguration.objects.get(pk=request.POST['pk'])
 			messages_configuration.is_active = True
@@ -390,17 +375,6 @@ class OneMessageView(FormView):
 		phone = self.object.phone
 		message = self.object.message
 
-		print('===============PHONEEE=======',self.object.phone)
 		self.send_message(phone,message)
 
-
-		
-
-
-
 		return HttpResponseRedirect(self.get_success_url())
-	# def form_valid(self, form):
-	#     # This method is called when valid form data has been POSTed.
-	#     # It should return an HttpResponse.
-	#     form.send_email()
-	#     return super().form_valid(form)
