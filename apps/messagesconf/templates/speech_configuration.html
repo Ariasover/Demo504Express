@@ -15,7 +15,7 @@
     <div class="row">
 		<div class="col-lg-12">
 			<div class="ibox-content">
-                <a href="{% url 'messagesconf:create_speech_configuration' %}" class="btn btn-primary btn-sm btn-block ">Crear configuración</a>
+                <a href="{% url 'messagesconf:create_speech_configuration' %}" class="btn btn-primary btn-sm btn-block ">Crear Speech</a>
                 <br>
                 <br>
 				<div class="table-responsive">
@@ -31,7 +31,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							{% for x in object_list %}
+							{% for x in speech_list %}
 								<tr>
 									<td align="center">{{x.name}}</td>
 									<td>{{x.text|slice:":20"}}...</td>
@@ -54,10 +54,6 @@
                                                 {% endif %}
                                                                                           
                                             </form>
-
-                                        {% comment %} <a href="{% url 'messagesconf:edit_speech' x.pk %}" class="btn btn-primary btn-sm">Editar</a> {% endcomment %}
-                                        <!-- <button type="submit" class="btn btn-success btn-sm">Usar</button> -->
-
 									</td>
                                     
 									<td align="center">
@@ -72,25 +68,7 @@
 							
 						</tbody>
 					</table>
-					
-
-					<div class="pagination">
-						<span class="page-links">
-							{% if page_obj.has_previous %}
-								<a href="/messages/dashboard?page={{ page_obj.previous_page_number }}">previous</a>
-							{% endif %}
-							<span class="page-current">
-								Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-							</span>
-							{% if page_obj.has_next %}
-								<a href="/messages/dashboard?page={{ page_obj.next_page_number }}">next</a>
-							{% endif %}
-						</span>
-					</div>
-					<br>
-
-					
-
+					{% include "pagination.html" %}
 				</div>  
 			</div>
 					

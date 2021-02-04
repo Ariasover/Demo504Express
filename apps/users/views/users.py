@@ -23,6 +23,9 @@ from selenium import webdriver
 # ChromeDriver
 import chromedriver_autoinstaller
 
+# Forms
+from ..forms import *
+
 
 class LoginView(View):
 	def post(self, request):
@@ -65,9 +68,24 @@ class IndexView(View):
 
 
 class UsersListView(ListView):
-    	
+		
 	model = User
 	template_name = 'users-list.html'
 	queryset = User.objects.filter(is_active=True)
 	context_object_name = 'users_list'
-	paginate_by = 4
+	paginate_by = 5
+
+
+
+class UsersCreateView(CreateView):
+	model = User
+	template_name = 'users-create.html'
+	form_class = CustomUserCreationForm
+	
+	def form_valid(self, form):
+		self.object = form.save(commit=False)
+		self.object.save()
+		return HttpResponseRedirect(self.get_success_url())
+	
+	def get_success_url(self):
+		return reverse('users:users_list')

@@ -23,7 +23,7 @@ from apps.utils.chrome_version import get_chrome_version
 
 
 # Forms
-from ..forms import MessagesConfigurationForm, OneMessageForm
+from ..forms import *
 
 
 
@@ -61,8 +61,8 @@ class ConfigurationView(View):
 class DashboardAereoView(ListView):
 	template_name = 'dashboard_aereo.html'
 	queryset = MessagesList.objects.all()
+	# context_object_name = 'users_list'
 	paginate_by = 5
-	no_of_message = 1
 
 	# Status
 	no_enviado = MessageListStatus.objects.get(description__icontains='No Enviado')
@@ -72,7 +72,7 @@ class DashboardAereoView(ListView):
 	def verify_excel(self, departure_date):
 		message_list = MessagesList.objects.filter(departure_date=departure_date)
 		for instance in message_list:
-    			
+				
 			if not len(instance.phone) == 11:
 				phone = re.sub('[\.-]','', instance.phone)
 				message_list.filter(pk=instance.pk).update(phone = phone)
@@ -87,7 +87,7 @@ class DashboardAereoView(ListView):
 
 
 	def send_messages(self):
-    	# Configuration
+		# Configuration
 		customer_list = MessagesList.objects.filter(status=self.no_enviado).values('pk','name','phone', 'message','amount','departure_date','weight_greather','weight_type')		
 		message_configuration = MessagesConfiguration.objects.get(is_active=True).text
 		message_text=""
@@ -147,17 +147,17 @@ class DashboardAereoView(ListView):
 
 				except Exception as e:
 					print('NOT SENT ===',e)
-
-					# if not ErrorNumber.objects.filter(message_list=customer).exists():	
-					# 	error = ErrorNumber()
-					# 	error.message_list = customer
-					# 	error.creation_user=self.request.user
-					# 	error.modification_user=self.request.user
-					# 	error.save()
+					if not ErrorNumber.objects.filter(message_list=customer).exists():	
+						error = ErrorNumber()
+						error.message_list = customer
+						error.creation_user=self.request.user
+						error.modification_user=self.request.user
+						error.save()
 				print('mensaje',count+1)
-				if count == 15:
+				if count == 20:
 					print('Deberia de hacer break')
 					break
+
 			endTime = tiempo.time()
 			elapsedTime = endTime - startTime
 			print("Elapsed Time = %s" % elapsedTime)
@@ -238,8 +238,10 @@ class DashboardAereoView(ListView):
 
 
 class SpeechConfigurationView(ListView):
+	model = MessagesConfiguration
 	template_name = 'speech_configuration.html'
 	queryset = MessagesConfiguration.objects.filter()
+	context_object_name = 'speech_list'
 	paginate_by = 5
 
 	def post(self,request):
@@ -355,8 +357,6 @@ class OneMessageView(FormView):
 		
 		driver.quit()
 
-			
-			
 
 	def get_success_url(self):
 		return reverse('messagesconf:one_message')

@@ -1,0 +1,37 @@
+
+
+
+
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+
+<div class="col-lg-7">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>Nuevo Speech</h5>
+        </div>
+        <div class="ibox-content">
+            <div class="row">
+                <form method="post">
+                    {% for field in form %}
+                        {% csrf_token %}
+                        <div class="form-group">
+                            {{ field.errors }}
+                            {{ field.label_tag }} {{ field }}
+                            {% if field.help_text %}
+                            <p class="help">{{ field.help_text|safe }}</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <div>
+                        <button class="btn btn-sm btn-primary pull-right m-t-n-xs" type="submit"><strong>Crear</strong></button>
+                    </div>
+                </form>               
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
