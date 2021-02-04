@@ -154,7 +154,7 @@ class DashboardAereoView(ListView):
 					# 	error.creation_user=self.request.user
 					# 	error.modification_user=self.request.user
 					# 	error.save()
-				
+				print('mensaje',count+1)
 				if count == 15:
 					print('Deberia de hacer break')
 					break
