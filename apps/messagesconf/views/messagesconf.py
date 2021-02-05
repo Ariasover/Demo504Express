@@ -140,21 +140,21 @@ class DashboardAereoView(ListView):
 						customer_list.filter(pk=customer['pk']).update(status = self.enviado)					
 					else:	
 						error = ErrorNumber()
-						error.message_list = customer
+						error.message_list = MessagesList.objects.get(pk=customer['pk'])
 						error.creation_user=self.request.user
 						error.modification_user=self.request.user
 						error.save()
 
 				except Exception as e:
 					print('NOT SENT ===',e)
-					if not ErrorNumber.objects.filter(message_list=customer).exists():	
+					if not ErrorNumber.objects.filter(message_list=customer['pk']).exists():	
 						error = ErrorNumber()
-						error.message_list = customer
+						error.message_list = MessagesList.objects.get(pk=customer['pk'])
 						error.creation_user=self.request.user
 						error.modification_user=self.request.user
 						error.save()
 				print('mensaje',count+1)
-				if count == 20:
+				if count == 15:
 					print('Deberia de hacer break')
 					break
 
