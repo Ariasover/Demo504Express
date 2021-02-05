@@ -21,6 +21,8 @@
         <form method="post">{% csrf_token %} 
             <h2 class="font-bold">¿Desea eliminar el registro?</h2>
             <input class="btn btn-sm btn-primary m-t-n-xs" type="submit" value="Confirmar"> 
+            {% comment %} <a class="btn btn-sm btn-danger m-t-n-xs" type="submit" value="Cancelar"> {% endcomment %}
+            <a href="{{ view.get_success_url }}" class="btn btn-sm btn-danger m-t-n-xs">Cancelar</a> 
         </form> 
     </div>
 </body>

@@ -242,7 +242,7 @@ class SpeechConfigurationView(ListView):
 	template_name = 'speech_configuration.html'
 	queryset = MessagesConfiguration.objects.filter()
 	context_object_name = 'speech_list'
-	paginate_by = 5
+	paginate_by = 1
 
 	def post(self,request):
 		if request.POST['options'] == "activate":
