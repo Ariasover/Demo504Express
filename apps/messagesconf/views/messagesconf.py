@@ -13,7 +13,6 @@ from django.contrib import messages
 from django.db import transaction
 
 
-
 # Models
 from apps.messagesconf.models.messagesconf import *
 
@@ -24,7 +23,6 @@ from apps.utils.chrome_version import get_chrome_version
 
 # Forms
 from ..forms import *
-
 
 
 # Openpyxl
@@ -49,9 +47,39 @@ from pathlib import Path
 from sys import platform
 from time import sleep
 import time as tiempo
-import re
+import re,os,threading
+
+class BackgroundTasks(threading.Thread):
+	def run(self,*args,**kwargs):
+		# os.system("taskkill /f /im  java.exe")
+		# os.system("taskkill /f /im  chromedriver.exe")
+
+		# os.system("java -Dwebdriver.chrome.driver=C:\\inetpub\\wwwroot\\ExpressEnv\\Lib\\site-packages\\chromedriver_autoinstaller\\88\\chromedriver.exe -jar C:\\Users\\Administrator\\Desktop\\selenium_server.jar -port 4045")
+		os.system("java -jar C:\\Users\\Administrator\\Desktop\\selenium_server.jar -role hub -port 4445")
+		os.system("java -Dwebdriver.chrome.driver=C:\\inetpub\\wwwroot\\ExpressEnv\\Lib\\site-packages\\chromedriver_autoinstaller\\88\\chromedriver.exe -jar C:\\Users\\Administrator\\Desktop\\selenium_server.jar -role webdriver  -hub http://localhost:4445/grid/register -port 5580")
+		
+
+	def run_selenium_server(self):
+		print('Running server')
+		os.system("java -jar C:\\Users\\Administrator\\Desktop\\selenium_server.jar -role hub -port 4445")
+		print('Selenium server up!')
+	def run_chrome_driver(self):
+		print('Running chromedriver')
+		os.system("java -Dwebdriver.chrome.driver=C:\\inetpub\\wwwroot\\ExpressEnv\\Lib\\site-packages\\chromedriver_autoinstaller\\88\\chromedriver.exe -jar C:\\Users\\Administrator\\Desktop\\selenium_server.jar -role webdriver  -hub http://localhost:4445/grid/register -port 5580")
+		print('Chromedriver up!')
+
+		# os.system("C:\\inetpub\\wwwroot\\ExpressEnv\\Lib\\site-packages\\chromedriver_autoinstaller\\88\\chromedriver.exe")
+		# # os.system("java -jar C:\\Users\\Administrator\\Desktop\\selenium_server.jar -port 4444 -role")
+		# os.system("java -jar C:\\Users\\Administrator\\Desktop\\selenium_server.jar -port 4045 -role hub")
+		# os.system("java -jar C:\\Users\\Administrator\\Desktop\\selenium_server.jar -host localhost -port 5555 -role node -hub http://localhost:4045/grid/register")
+		# # os.system("C:\\inetpub\\wwwroot\\ExpressEnv\\Lib\\site-packages\chromedriver_autoinstaller\88\chromedriver.exe -jar C:\\Users\\Administrator\\Desktop\\selenium_server.jar -port 4444 -role node -hub http://localhost:4444/grid/register")
 
 
+		# # os.system("java -jar C:\\Users\\Administrator\\Desktop\\selenium_server.jar -port 4444 -role hub")
+		# # os.system("java -jar C:\\Users\\Administrator\\Desktop\\selenium_server.jar -host localhost -port 5555 -role node -hub http://localhost:4444/grid/register")
+		# # os.system("java -Dwebdriver.chrome.driver=C:\\inetpub\\wwwroot\\ExpressEnv\\Lib\\site-packages\chromedriver_autoinstaller\88\chromedriver.exe -jar C:\\Users\\Administrator\\Desktop\\selenium_server.jar -port 4444 -role node -hub http://localhost:4444/grid/register")
+		# # java -jar C:\\Users\\Administrator\\Desktop\\selenium_server.jar -host localhost -port 5555 -role node -hub http://localhost:4444/grid/register
+				
 
 class ConfigurationView(View):
 	def get(self, request):
@@ -61,7 +89,6 @@ class ConfigurationView(View):
 class DashboardAereoView(ListView):
 	template_name = 'dashboard_aereo.html'
 	queryset = MessagesList.objects.all()
-	# context_object_name = 'users_list'
 	paginate_by = 5
 
 	# Status
@@ -69,6 +96,12 @@ class DashboardAereoView(ListView):
 	enviado = MessageListStatus.objects.get(description='Enviado')
 	error = MessageListStatus.objects.get(description__icontains='Error')
 	
+	def background_tasks(self):
+		background = BackgroundTasks()
+		background.run_selenium_server()
+		background.run_chrome_driver()
+		
+
 	def verify_excel(self, departure_date):
 		message_list = MessagesList.objects.filter(departure_date=departure_date)
 		for instance in message_list:
@@ -88,12 +121,25 @@ class DashboardAereoView(ListView):
 
 	def send_messages(self):
 		# Configuration
+		# print('A PUNTO DE ABRIR PROCESO')
+		# self.background_tasks()
+
+		# t1 = threading.Thread(target = self.run_selenium_server(),args=(arr,))
+		# t2 = threading.Thread(target = self.run_chrome_driver(),args=(arr,))
+		# t2 = threading.Thread(target = cal_cube,args=(arr,))
+
+
+
 		customer_list = MessagesList.objects.filter(status=self.no_enviado).values('pk','name','phone', 'message','amount','departure_date','weight_greather','weight_type')		
 		message_configuration = MessagesConfiguration.objects.get(is_active=True).text
 		message_text=""
 		xpath = '//*[@id="main"]/footer/div[1]/div[2]/div/div[2]'
 		invalid_xpath = '/html/body/div[1]/div/span[2]/div/span/div/div/div/div/div/div[2]/div/div/div'
 		time=20
+
+		f = open("log_back.txt", "w")
+		f.write("prueba")
+		f.close()
 
 		# Loop over customer
 		if customer_list.exists():	 
@@ -104,12 +150,18 @@ class DashboardAereoView(ListView):
 				chrome_server_version = chrome_server_version[0]+chrome_server_version[1] #for example '87' #TODO CAMBIAR ESTE METODO POR EL DE CHROMDRIVER()PARA OBTENER MEJOR LA VERSION
 				driver = webdriver.Chrome(executable_path=str(settings.VIRTUALENV_DIR)+'/lib/python3.7/site-packages/chromedriver_autoinstaller/'+chrome_server_version+'/chromedriver')
 			else:
-				
-				driver = webdriver.Remote(
-   					command_executor='http://localhost:4444/wd/hub',
-   					desired_capabilities=DesiredCapabilities.CHROME)
-				
+				try:
+					
+					driver = webdriver.Remote(
+					command_executor='http://localhost:4445/wd/hub',
+					desired_capabilities=DesiredCapabilities.CHROME)
+				except Exception as e:
+					f = open('log.txt', 'w')
+					f.write('An exceptional thing happed - %s' % e)
+					f.close()
+
 			driver.get("http://web.whatsapp.com")
+			
 			# sleep(5) # Cambiar si es necesario
 			text_box=""
 			startTime = tiempo.time()
@@ -155,7 +207,8 @@ class DashboardAereoView(ListView):
 						error.save()
 				print('mensaje',count+1)
 				if count == 15:
-					print('Deberia de hacer break')
+
+					
 					break
 
 			endTime = tiempo.time()
@@ -163,6 +216,9 @@ class DashboardAereoView(ListView):
 			print("Elapsed Time = %s" % elapsedTime)
 			messages.success(self.request, 'Mensajes enviados',extra_tags='success')
 			driver.quit()
+			# os.system("taskkill /f /im  java.exe")
+			os.system("taskkill /f /im  chromedriver.exe")
+			print('Killing java process')
 		else:
 			messages.error(self.request, 'No hay destinatarios',extra_tags='error')
 
