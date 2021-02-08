@@ -71,9 +71,25 @@ class UsersListView(ListView):
 		
 	model = User
 	template_name = 'users-list.html'
-	queryset = User.objects.filter(is_active=True)
+	queryset = User.objects.filter()
 	context_object_name = 'users_list'
 	paginate_by = 5
+
+	# def get(self):
+    # 	return render(request, 'users.html')
+
+	def post(self,request):
+		if request.POST['options'] == "activate":
+			user = User.objects.get(pk=request.POST['pk'])
+			user.is_active = True
+			user.save()
+
+		elif request.POST['options'] == "deactivate":
+			user = User.objects.get(pk=request.POST['pk'])
+			user.is_active = False
+			user.save()
+
+		return HttpResponseRedirect(reverse('users:users_list'))
 
 
 
@@ -85,7 +101,4 @@ class UsersCreateView(CreateView):
 	def form_valid(self, form):
 		self.object = form.save(commit=False)
 		self.object.save()
-		return HttpResponseRedirect(self.get_success_url())
-	
-	def get_success_url(self):
-		return reverse('users:users_list')
+		return HttpResponseRedirect(reverse('users:users_list'))
