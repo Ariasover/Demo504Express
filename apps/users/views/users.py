@@ -76,7 +76,7 @@ class UsersListView(ListView):
 	paginate_by = 5
 
 	# def get(self):
-    # 	return render(request, 'users.html')
+	# 	return render(request, 'users.html')
 
 	def post(self,request):
 		if request.POST['options'] == "activate":
@@ -91,8 +91,7 @@ class UsersListView(ListView):
 
 		return HttpResponseRedirect(reverse('users:users_list'))
 
-
-
+		
 class UsersCreateView(CreateView):
 	model = User
 	template_name = 'users-create.html'
@@ -102,3 +101,12 @@ class UsersCreateView(CreateView):
 		self.object = form.save(commit=False)
 		self.object.save()
 		return HttpResponseRedirect(reverse('users:users_list'))
+
+class UsersUpdateView(UpdateView):
+	model = User
+	template_name = 'users-create.html'
+	form_class = CustomUserCreationForm
+	
+	
+	def get_success_url(self):
+		return reverse('users:users_list')
