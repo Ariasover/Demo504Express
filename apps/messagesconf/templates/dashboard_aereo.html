@@ -12,25 +12,7 @@
 		</div>
 	</div>
     <div class="row">
-        <div class="col-lg-5">
-            <div class="ibox float-e-margins">
-                <div class="ibox-title">
-                    <h5>Subir Excel</h5>
-                </div>
-                <div class="ibox-content">
-                    <div class="text-center">
-                        <form method="post" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <input type="file" name="myfile">
-                            <input type="hidden" name="options" value="upload_excel">
-                            <br>
-						    <button type="submit" class="btn btn-primary btn-sm">Subir archivo</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-7">
+        <div class="col-lg-8">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
 				    <h5>No Enviados Hoy {{quantity_not_sent}}</h5>
@@ -74,6 +56,41 @@
 				    </div> 
                 </div>
             </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Speech actual</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="text-center">
+
+                        <div class="form-group">
+                            <input disabled class="form-control" type="text" value="{{speech.name}}">
+                        </div>
+
+                        {% comment %} <textarea rows="10" cols="40">{{speech.text}}</textarea> {% endcomment %}
+                    </div>
+                </div>
+            </div>
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Subir Excel</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="text-center">
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="file" name="myfile">
+                            <input type="hidden" name="options" value="upload_excel">
+                            <br>
+						    <button type="submit" class="btn btn-primary btn-sm">Subir archivo</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
         </div>
     </div>
 {% endblock %}

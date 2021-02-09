@@ -60,15 +60,22 @@ class ConfigurationView(View):
 
 
 class DashboardAereoView(ListView):
+	model = MessagesList
 	template_name = 'dashboard_aereo.html'
-	queryset = MessagesList.objects.all()
-	# context_object_name = 'users_list'
 	paginate_by = 5
+	context_object_name = "not_sent_messages"
 
 	# Status
 	no_enviado = MessageListStatus.objects.get(description__icontains='No Enviado')
 	enviado = MessageListStatus.objects.get(description='Enviado')
 	error = MessageListStatus.objects.get(description__icontains='Error')
+	
+
+	def get_queryset(self):
+		"""Returns number of not sent items"""
+		not_sent = MessagesList.objects.filter(status=self.no_enviado)
+		return not_sent
+	
 	
 	def verify_excel(self, departure_date):
 		message_list = MessagesList.objects.filter(departure_date=departure_date)
@@ -226,15 +233,17 @@ class DashboardAereoView(ListView):
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		not_sent_messages= self.queryset.filter(status=self.no_enviado)[:5]
-		quantity_not_sent= len(self.queryset.filter(status=self.no_enviado))
+
+		quantity_not_sent= self.get_queryset().count()
+		speech = MessagesConfiguration.objects.get(is_active=True)
+
 		context.update({
-			'not_sent_messages': not_sent_messages,
 			'quantity_not_sent':quantity_not_sent,
+			'speech':speech,
 		})		
 		return context
-        
-        	
+		
+			
 class OneMessageView(FormView):
 	model = MessagesList 
 	template_name = 'one_message.html'
