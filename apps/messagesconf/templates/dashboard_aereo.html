@@ -63,14 +63,20 @@
                     <h5>Speech actual</h5>
                 </div>
                 <div class="ibox-content">
-                    <div class="text-center">
-
-                        <div class="form-group">
-                            <input disabled class="form-control" type="text" value="{{speech.name}}">
-                        </div>
-
-                        {% comment %} <textarea rows="10" cols="40">{{speech.text}}</textarea> {% endcomment %}
-                    </div>
+                    <table class="table table-hover no-margins">
+                        <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Tipo</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>{{speech.name}}</td>
+                            <td>{{speech.configuration_type}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div class="ibox float-e-margins">
