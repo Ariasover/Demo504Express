@@ -24,6 +24,7 @@ from apps.utils.chrome_version import get_chrome_version
 
 # Forms
 from ..forms import *
+from ...speech.forms import MessagesConfigurationForm
 
 
 
@@ -232,68 +233,8 @@ class DashboardAereoView(ListView):
 			'quantity_not_sent':quantity_not_sent,
 		})		
 		return context
-
-
-
-
-
-class SpeechConfigurationView(ListView):
-	model = MessagesConfiguration
-	template_name = 'speech_configuration_list.html'
-	queryset = MessagesConfiguration.objects.filter()
-	context_object_name = 'speech_list'
-	paginate_by = 1
-	
-	
-	def post(self,request):
-		if request.POST['options'] == "activate":
-			MessagesConfiguration.objects.all().update(is_active=False)
-			messages_configuration = MessagesConfiguration.objects.get(pk=request.POST['pk'])
-			messages_configuration.is_active = True
-			messages_configuration.save()
-
-		elif request.POST['options'] == "deactivate":
-			messages_configuration = MessagesConfiguration.objects.get(pk=request.POST['pk'])
-			messages_configuration.is_active = False
-			messages_configuration.save()
-
-		return HttpResponseRedirect('/messages/speech-configuration')		
-
-
-class SpeechCreateView(CreateView):
-	model = MessagesConfiguration
-	template_name = 'create_speech_configuration.html'
-	form_class = MessagesConfigurationForm
-	
-	def form_valid(self, form):
-		self.object = form.save(commit=False)
-		self.object.creation_user = self.request.user
-		self.object.modification_user = self.request.user
-		self.object.save()
-		return HttpResponseRedirect(self.get_success_url())
-	
-	def get_success_url(self):
-		return reverse('messagesconf:speech_configuration')
-
-
-class SpeechUpdateView(UpdateView):
-	model = MessagesConfiguration
-	template_name = 'create_speech_configuration.html'
-	form_class = MessagesConfigurationForm
-
-	def get_success_url(self):
-		return reverse('messagesconf:speech_configuration')
-
-	
-class SpeechDeleteView(DeleteView):
-	model = MessagesConfiguration 
-	template_name = 'confirm_delete.html'
-
-	def get_success_url(self):
-		return reverse('messagesconf:speech_configuration')
-
-
-	
+        
+        	
 class OneMessageView(FormView):
 	model = MessagesList 
 	template_name = 'one_message.html'

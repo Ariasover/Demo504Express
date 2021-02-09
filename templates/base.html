@@ -48,19 +48,9 @@
                     <li>
                         <a href="{% url 'messagesconf:dashboard_aereo' %}"><i class="fa fa-plane"></i> <span class="nav-label">Para Aéreos</span></a>
                     </li>
-                {% endif %}
-                    <li>
-                        <a href="{% url 'messagesconf:one_message' %}"><i class="fa fa-whatsapp"></i> <span class="nav-label">Mensaje individual</span></a>
-                    </li>
-
-                {% comment %} {% if request.user|has_group:"maritimo" %} 
-                    <li>
-                        <a href="{% url 'messagesconf:dashboard_maritimo' %}"><i class="fa fa-ship"></i> <span class="nav-label">Para Marítimos</span></a>
-                    </li>
-                {% endif %} {% endcomment %}
-                
+                {% endif %}              
                 <li>
-                    <a href="{% url 'messagesconf:configuration' %}"><i class="fa fa-cog"></i> <span class="nav-label">Configuración</span> </a>
+                    <a href="{% url 'configuration' %}"><i class="fa fa-cog"></i> <span class="nav-label">Configuración</span> </a>
                 </li>
             </ul>
 

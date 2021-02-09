@@ -18,7 +18,7 @@
                     <h5>Speech</h5>
                 </div>
                 <div class="ibox-content">
-                    <a href="{% url 'messagesconf:speech_configuration' %}" class="btn btn-primary btn-block m-t"><i class="fa fa-file-text-o"></i> Ver configuración</a>
+                    <a href="{% url 'speech:list' %}" class="btn btn-primary btn-block m-t"><i class="fa fa-file-text-o"></i> Ver configuración</a>
                 </div>
                     
             </div>            
@@ -34,17 +34,18 @@
                     
             </div>            
         </div>
-        {% comment %} <div class="col-lg-4">
+        <div class="col-lg-4">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5>Usuarios</h5>
+                    <h5>Permisos</h5>
                 </div>
                 <div class="ibox-content">
-                    <button class="btn btn-primary btn-block m-t"><i class="fa fa-user"></i> ver configuración</button>
+                    <a href="{% url 'users:groups_list' %}" class="btn btn-primary btn-block m-t"><i class="fa fa-file-text-o"></i> Ver configuración</a>
                 </div>
                     
             </div>            
-        </div> {% endcomment %}
+        </div>
+        
     </div>
     
 {% endblock %}

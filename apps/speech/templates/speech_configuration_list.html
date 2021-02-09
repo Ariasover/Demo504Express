@@ -18,7 +18,7 @@ Configuración Speech
             <div class="ibox">
                 <div class="ibox-title">
                     <div class="ibox-tools">
-                        <a href="{% url 'messagesconf:create_speech_configuration' %}" class="btn btn-primary btn-sm">Nuevo <i class="fa fa-plus"></i></a>
+                        <a href="{% url 'speech:create' %}" class="btn btn-primary btn-sm">Nuevo <i class="fa fa-plus"></i></a>
                         
                     </div>
                 </div>
@@ -60,8 +60,8 @@ Configuración Speech
                                     </td>
                                     <td class="text-center">
                                         <div class="btn-group">
-                                            <a href="{% url 'messagesconf:update_speech_configuration' x.pk %}" class="btn-white btn btn-sm">Editar</a>
-                                            <a href="{% url 'messagesconf:delete_speech_configuration' x.pk %}" class="btn-white btn btn-sm">Eliminar</a>
+                                            <a href="{% url 'speech:update' x.pk %}" class="btn-white btn btn-sm">Editar</a>
+                                            <a href="{% url 'speech:delete' x.pk %}" class="btn-white btn btn-sm">Eliminar</a>
                                         </div>
                                     </td>
                                 </tr>

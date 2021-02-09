@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'apps.users',
     'apps.utils',
     'apps.messagesconf',
+    'apps.speech',
 
     # External apps
 ]
