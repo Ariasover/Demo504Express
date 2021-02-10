@@ -97,8 +97,7 @@ class DashboardAereoView(ListView):
 		invalid_xpath = '/html/body/div[1]/div/span[2]/div/span/div/div/div/div/div/div[2]/div/div/div'
 		time=20
 
-		# Verificar la carga por dia
-			# si la carga por dia es 
+		
 		if customer_list.exists():	 
 			if platform == "linux" or platform == "linux2" or platform == "darwin":
 				plistloc = "/Applications/Google Chrome.app/Contents/Info.plist"
@@ -170,7 +169,7 @@ class DashboardAereoView(ListView):
 
 	def get_queryset(self):
 		"""Returns number of not sent items"""
-		not_sent = MessagesList.objects.filter(status=self.no_enviado)
+		not_sent = MessagesList.objects.filter()
 		return not_sent
 	
 
@@ -237,10 +236,14 @@ class DashboardAereoView(ListView):
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
 
-		quantity_not_sent= self.get_queryset().count()
+		not_sent= self.get_queryset().filter(status=self.no_enviado).count()
+		total = self.get_queryset().count()
+		sent = self.get_queryset().filter(status=self.enviado).count()
 		speech = MessagesConfiguration.objects.filter(is_active=True).get()
 		context.update({
-			'quantity_not_sent':quantity_not_sent,
+			'not_sent':not_sent,
+			'sent':sent,
+			'total':total,
 			'speech':speech,
 		})		
 		return context
@@ -250,7 +253,7 @@ class OneMessageView(FormView):
 	model = MessagesList 
 	template_name = 'one_message.html'
 	form_class = OneMessageForm
-	# success_url = '/thanks/'
+
 	def send_message(self,phone,message):	
 		message_text=message
 		xpath = '//*[@id="main"]/footer/div[1]/div[2]/div/div[2]'
