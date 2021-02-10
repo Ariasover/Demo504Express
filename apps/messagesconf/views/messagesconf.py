@@ -90,7 +90,8 @@ class DashboardAereoView(ListView):
 
 	def send_messages(self):
 		# Configuration
-		customer_list = MessagesList.objects.filter(status=self.no_enviado).values('pk','name','phone', 'message','amount','departure_date','weight_greather','weight_type')		
+		status_not_sent = MessageListStatus.objects.get(description__icontains='No Enviado')
+		customer_list = MessagesList.objects.filter(status=status_not_sent).values('pk','name','phone', 'message','amount','departure_date','weight_greather','weight_type')		
 		message_configuration = MessagesConfiguration.objects.get(is_active=True).text
 		message_text=""
 		xpath = '//*[@id="main"]/footer/div[1]/div[2]/div/div[2]'
@@ -177,6 +178,7 @@ class DashboardAereoView(ListView):
 		if request.POST['options'] == "send_all":
 			self.send_messages()
 		elif request.POST['options'] == 'upload_excel':
+
 			try: 
 				with transaction.atomic():
 					file = request.FILES['myfile']
@@ -216,7 +218,9 @@ class DashboardAereoView(ListView):
 										messages_list.weight_type = hoja1['M'+str(i)].value
 										messages_list.creation_user=self.request.user
 										messages_list.modification_user=self.request.user
-										messages_list.status = self.no_enviado
+
+										status_not_sent = MessageListStatus.objects.get(description__icontains='No Enviado')
+										messages_list.status = status_not_sent
 										messages_list.save()
 										
 
@@ -235,8 +239,8 @@ class DashboardAereoView(ListView):
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-
-		not_sent= self.get_queryset().filter(status=self.no_enviado).count()
+		status_not_sent = MessageListStatus.objects.get(description__icontains='No Enviado')
+		not_sent= self.get_queryset().filter(status=status_not_sent).count()
 		total = self.get_queryset().count()
 		sent = self.get_queryset().filter(status=self.enviado).count()
 		speech = MessagesConfiguration.objects.filter(is_active=True).get()
