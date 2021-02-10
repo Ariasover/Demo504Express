@@ -187,40 +187,44 @@ class DashboardAereoView(ListView):
 						hoja1 = doc.get_sheet_by_name(nombres_hojas[0])
 						mayor = 0     
 						x=4
-						print('Numero mayor de la hoja',mayor)
+						
+						#Verify if same date exists
 
-						# Verificar el excel linea por linea.
-						for y in range(4,1000):
-							# print('y inicia en ',y)
-							if not hoja1['B'+str(y)].value == None:
-								mayor=mayor+1
-							else:
-								break
-						departure_date = str(hoja1['M2'].value)		
-						# departure_date = departure_date.date()
+						if MessagesList.objects.filter(departure_date= hoja1['M2'].value).exists():
+							messages.error(self.request, 'El excel ya se ha subido',extra_tags='error')
+						else:
+							departure_date = str(hoja1['M2'].value)
+							print('Numero mayor de la hoja',mayor)
 
-						for i in range (4, mayor+4):	
-							if not hoja1['N'+str(i)].value == '#VALUE!' or not hoja1['N'+str(i)].value == '#N/A':
-								if  not hoja1['C'+str(i)].value == None:
-									messages_list = MessagesList()
-									messages_list.name=hoja1['B'+str(i)].value
+							
+							for y in range(4,1000):
+								if not hoja1['B'+str(y)].value == None:
+									mayor=mayor+1
+								else:
+									break
 
-									# validate phone
-									messages_list.phone = "504"+str(hoja1['C'+str(i)].value)
-									messages_list.departure_date = departure_date
-									messages_list.amount = hoja1['P'+str(i)].value
-									messages_list.weight_greather = hoja1['N'+str(i)].value
-									messages_list.weight_type = hoja1['M'+str(i)].value
-									messages_list.creation_user=self.request.user
-									messages_list.modification_user=self.request.user
-									messages_list.status = self.no_enviado
-									messages_list.save()
-									
+							for i in range (4, mayor+4):	
+								if not hoja1['N'+str(i)].value == '#VALUE!' or not hoja1['N'+str(i)].value == '#N/A':
+									if  not hoja1['C'+str(i)].value == None:
+										messages_list = MessagesList()
+										messages_list.name=hoja1['B'+str(i)].value
 
-									x = x + 1
+										# validate phone
+										messages_list.phone = "504"+str(hoja1['C'+str(i)].value)
+										messages_list.departure_date = departure_date
+										messages_list.amount = hoja1['P'+str(i)].value
+										messages_list.weight_greather = hoja1['N'+str(i)].value
+										messages_list.weight_type = hoja1['M'+str(i)].value
+										messages_list.creation_user=self.request.user
+										messages_list.modification_user=self.request.user
+										messages_list.status = self.no_enviado
+										messages_list.save()
+										
 
-						self.verify_excel(departure_date)
-						messages.success(request, '¡Archivo subido y verificado con éxito!', extra_tags='success')
+										x = x + 1
+
+							self.verify_excel(departure_date)
+							messages.success(request, '¡Archivo subido y verificado con éxito!', extra_tags='success')
 					else:
 						messages.error(request, 'La extensión del archivo es incorrecta', extra_tags='error')
 			except Exception as e:
