@@ -74,7 +74,6 @@ class DashboardAereoView(ListView):
 	def verify_excel(self, departure_date):
 		message_list = MessagesList.objects.filter(departure_date=departure_date)
 		for instance in message_list:
-				
 			if not len(instance.phone) == 11:
 				phone = re.sub('[\.-]','', instance.phone)
 				message_list.filter(pk=instance.pk).update(phone = phone)
@@ -86,6 +85,7 @@ class DashboardAereoView(ListView):
 
 				# Update message list with error
 				# message_list.filter(pk=instance.pk).update(status = self.error)
+		messages.success(self.request, '¡Archivo subido y verificado con éxito!', extra_tags='success')
 
 
 	def send_messages(self):
@@ -168,6 +168,56 @@ class DashboardAereoView(ListView):
 			messages.error(self.request, 'No hay destinatarios',extra_tags='error')
 
 
+	def upload_excel(self,request):
+		try: 
+			with transaction.atomic():
+				# Verify extension
+				file = self.request.FILES['myfile']
+				if file.name.endswith('xlsx'):
+    					
+					doc = load_workbook(file,data_only=True)
+					nombres_hojas = doc.sheetnames
+					hoja1 = doc.get_sheet_by_name(nombres_hojas[0])	
+					departure_date = str(hoja1['M2'].value)
+
+					if MessagesList.objects.filter(departure_date = departure_date).exists():
+						messages.error(self.request, 'El archivo ya existe',extra_tags='error')
+					else:
+
+						# Initial configuration						
+						mayor = 0     						
+						# Get total number of rows
+						for y in range(4,1000):
+							if not hoja1['B'+str(y)].value == None:
+								mayor=mayor+1
+							else:
+								break
+						
+						# Save in database
+						for i in range (4, mayor+4):	
+							if not hoja1['N'+str(i)].value == '#VALUE!' or not hoja1['N'+str(i)].value == '#N/A':
+								if  not hoja1['C'+str(i)].value == None:
+									messages_list = MessagesList()
+									messages_list.name=hoja1['B'+str(i)].value
+									messages_list.phone = "504"+str(hoja1['C'+str(i)].value)
+									messages_list.departure_date = departure_date
+									messages_list.amount = hoja1['P'+str(i)].value
+									messages_list.weight_greather = hoja1['N'+str(i)].value
+									messages_list.weight_type = hoja1['M'+str(i)].value
+									messages_list.creation_user=self.request.user
+									messages_list.modification_user=self.request.user
+									messages_list.status = MessageListStatus.objects.get(description__icontains='No Enviado')
+									messages_list.save()
+
+						# Verify if excel is valid
+						self.verify_excel(departure_date)
+				else:
+					messages.error(request, 'La extensión del archivo es incorrecta', extra_tags='error')
+		except Exception as e:
+			print('error',e)
+			messages.error(request, 'No se ha podido subir el archivo', extra_tags='error')
+
+
 	def get_queryset(self):
 		"""Returns number of not sent items"""
 		not_sent = MessagesList.objects.filter()
@@ -178,63 +228,8 @@ class DashboardAereoView(ListView):
 		if request.POST['options'] == "send_all":
 			self.send_messages()
 		elif request.POST['options'] == 'upload_excel':
-
-			try: 
-				with transaction.atomic():
-					file = request.FILES['myfile']
-					if file.name.endswith('xlsx'): #Verify extension
-						doc = load_workbook(file,data_only=True)
-						nombres_hojas = doc.sheetnames
-						hoja1 = doc.get_sheet_by_name(nombres_hojas[0])
-						mayor = 0     
-						x=4
-						
-						#Verify if same date exists
-
-						if MessagesList.objects.filter(departure_date= hoja1['M2'].value).exists():
-							messages.error(self.request, 'El excel ya se ha subido',extra_tags='error')
-						else:
-							departure_date = str(hoja1['M2'].value)
-							print('Numero mayor de la hoja',mayor)
-
-							
-							for y in range(4,1000):
-								if not hoja1['B'+str(y)].value == None:
-									mayor=mayor+1
-								else:
-									break
-
-							for i in range (4, mayor+4):	
-								if not hoja1['N'+str(i)].value == '#VALUE!' or not hoja1['N'+str(i)].value == '#N/A':
-									if  not hoja1['C'+str(i)].value == None:
-										messages_list = MessagesList()
-										messages_list.name=hoja1['B'+str(i)].value
-
-										# validate phone
-										messages_list.phone = "504"+str(hoja1['C'+str(i)].value)
-										messages_list.departure_date = departure_date
-										messages_list.amount = hoja1['P'+str(i)].value
-										messages_list.weight_greather = hoja1['N'+str(i)].value
-										messages_list.weight_type = hoja1['M'+str(i)].value
-										messages_list.creation_user=self.request.user
-										messages_list.modification_user=self.request.user
-
-										status_not_sent = MessageListStatus.objects.get(description__icontains='No Enviado')
-										messages_list.status = status_not_sent
-										messages_list.save()
-										
-
-										x = x + 1
-
-							self.verify_excel(departure_date)
-							messages.success(request, '¡Archivo subido y verificado con éxito!', extra_tags='success')
-					else:
-						messages.error(request, 'La extensión del archivo es incorrecta', extra_tags='error')
-			except Exception as e:
-				print('error',e)
-				messages.error(request, 'No se ha podido subir el archivo', extra_tags='error')
-
-		return HttpResponseRedirect('/messages/dashboard-aereo')
+			self.upload_excel(request)
+		return HttpResponseRedirect(reverse('messagesconf:dashboard_aereo'))
 	
 
 	def get_context_data(self, **kwargs):

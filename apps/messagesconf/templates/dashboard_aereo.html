@@ -62,10 +62,7 @@
                                     <tr>
                                         <td>{{x.name}}</td>
                                         <td>{{x.phone}}</td>
-                                        <td>{% if x.status == 0 %}No enviado {% else %} Enviado {% endif %}</td>
-                                        <td>
-                                            <!-- <a href="" class="btn btn-danger btn-sm">Enviar mensaje</a> -->
-                                        </td>
+                                        <td>{{x.status}}</td>
                                     </tr>
                                 {% endfor %}
                                 
