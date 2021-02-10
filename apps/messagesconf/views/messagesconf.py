@@ -70,12 +70,6 @@ class DashboardAereoView(ListView):
 	enviado = MessageListStatus.objects.get(description='Enviado')
 	error = MessageListStatus.objects.get(description__icontains='Error')
 	
-
-	def get_queryset(self):
-		"""Returns number of not sent items"""
-		not_sent = MessagesList.objects.filter(status=self.no_enviado)
-		return not_sent
-	
 	
 	def verify_excel(self, departure_date):
 		message_list = MessagesList.objects.filter(departure_date=departure_date)
@@ -103,7 +97,8 @@ class DashboardAereoView(ListView):
 		invalid_xpath = '/html/body/div[1]/div/span[2]/div/span/div/div/div/div/div/div[2]/div/div/div'
 		time=20
 
-		# Loop over customer
+		# Verificar la carga por dia
+			# si la carga por dia es 
 		if customer_list.exists():	 
 			if platform == "linux" or platform == "linux2" or platform == "darwin":
 				plistloc = "/Applications/Google Chrome.app/Contents/Info.plist"
@@ -120,7 +115,7 @@ class DashboardAereoView(ListView):
 			driver.get("http://web.whatsapp.com")
 			# sleep(5) # Cambiar si es necesario
 			text_box=""
-			startTime = tiempo.time()
+			# startTime = tiempo.time()
 			for count,customer in enumerate(customer_list):
 				try:
 					message_text = message_configuration.replace('/name/',customer['name'])
@@ -144,7 +139,6 @@ class DashboardAereoView(ListView):
 							ActionChains(driver).key_down(Keys.SHIFT).key_down(Keys.ENTER).key_up(Keys.SHIFT).key_up(Keys.ENTER).perform()
 						ActionChains(driver).send_keys(Keys.RETURN).perform()
 
-						# Update SENT
 						customer_list.filter(pk=customer['pk']).update(status = self.enviado)					
 					else:	
 						error = ErrorNumber()
@@ -163,17 +157,22 @@ class DashboardAereoView(ListView):
 						error.save()
 				print('mensaje',count+1)
 				if count == 15:
-					print('Deberia de hacer break')
 					break
 
-			endTime = tiempo.time()
-			elapsedTime = endTime - startTime
-			print("Elapsed Time = %s" % elapsedTime)
+			# endTime = tiempo.time()
+			# elapsedTime = endTime - startTime
+			# print("Elapsed Time = %s" % elapsedTime)
 			messages.success(self.request, 'Mensajes enviados',extra_tags='success')
 			driver.quit()
 		else:
 			messages.error(self.request, 'No hay destinatarios',extra_tags='error')
 
+
+	def get_queryset(self):
+		"""Returns number of not sent items"""
+		not_sent = MessagesList.objects.filter(status=self.no_enviado)
+		return not_sent
+	
 
 	def post(self, request):
 		if request.POST['options'] == "send_all":
@@ -235,8 +234,7 @@ class DashboardAereoView(ListView):
 		context = super().get_context_data(**kwargs)
 
 		quantity_not_sent= self.get_queryset().count()
-		speech = MessagesConfiguration.objects.get(is_active=True)
-
+		speech = MessagesConfiguration.objects.filter(is_active=True).get()
 		context.update({
 			'quantity_not_sent':quantity_not_sent,
 			'speech':speech,
