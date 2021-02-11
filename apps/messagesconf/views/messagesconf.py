@@ -74,17 +74,10 @@ class DashboardAereoView(ListView):
 	def verify_excel(self, departure_date):
 		message_list = MessagesList.objects.filter(departure_date=departure_date)
 		for instance in message_list:
+    		# Verify all about phone
 			if not len(instance.phone) == 11:
 				phone = re.sub('[\.-]','', instance.phone)
 				message_list.filter(pk=instance.pk).update(phone = phone)
-				# error_number = ErrorNumber()
-				# error_number.message_list = instance
-				# error_number.creation_user=self.request.user
-				# error_number.modification_user=self.request.user
-				# error_number.save()
-
-				# Update message list with error
-				# message_list.filter(pk=instance.pk).update(status = self.error)
 		messages.success(self.request, '¡Archivo subido y verificado con éxito!', extra_tags='success')
 
 
@@ -174,7 +167,7 @@ class DashboardAereoView(ListView):
 				# Verify extension
 				file = self.request.FILES['myfile']
 				if file.name.endswith('xlsx'):
-    					
+						
 					doc = load_workbook(file,data_only=True)
 					nombres_hojas = doc.sheetnames
 					hoja1 = doc.get_sheet_by_name(nombres_hojas[0])	
