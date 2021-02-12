@@ -1,42 +1,15 @@
 """ User's Views """
 
 # Django 
-from django.contrib.auth import authenticate,logout,login
-from django.views.generic import View
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render,get_object_or_404
-from django.conf import settings
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import ListView,UpdateView,CreateView,DeleteView
-from django.views.generic.edit import FormView
 from django.contrib import messages
-from django.db import transaction
 
-
-# Selenium
-from selenium.webdriver.common.by import By
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-
-
-# Local
-import socket,os,plistlib,datetime,re, time as tiempo
-from pathlib import Path
-from sys import platform
-from time import sleep
 
 # Models
 from ..models.speech import *
 from ...messagesconf.models.messagesconf import *
-
-# Utils
-from apps.utils.chrome_version import get_chrome_version
 
 
 # Forms
@@ -47,12 +20,25 @@ from ..forms import *
 from openpyxl import load_workbook
 
 
+# Filters
+from ..filters import OrderFilter
+
+
 class SpeechConfigurationView(ListView):
 	model = MessagesConfiguration
 	template_name = 'speech_configuration_list.html'
-	queryset = MessagesConfiguration.objects.filter()
-	context_object_name = 'speech_list'
 	paginate_by = 5
+
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context["filter"] = OrderFilter(self.request.GET,queryset=self.get_queryset())
+		return context
+	
+	def get_queryset(self):
+		qs = self.model.objects.all()
+		product_filtered_list = OrderFilter(self.request.GET, queryset=qs)
+		return product_filtered_list.qs
 	
 	
 	def post(self,request):

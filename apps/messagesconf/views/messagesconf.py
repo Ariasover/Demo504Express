@@ -13,6 +13,17 @@ from django.contrib import messages
 from django.db import transaction
 
 
+# Selenium
+from selenium.webdriver.common.by import By
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+
 
 # Models
 from apps.messagesconf.models.messagesconf import *
@@ -27,21 +38,8 @@ from ..forms import *
 from ...speech.forms import MessagesConfigurationForm
 
 
-
 # Openpyxl
 from openpyxl import load_workbook
-
-
-# Selenium
-from selenium.webdriver.common.by import By
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 
 # Local
@@ -51,7 +49,6 @@ from sys import platform
 from time import sleep
 import time as tiempo
 import re
-
 
 
 class ConfigurationView(View):

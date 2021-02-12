@@ -35,7 +35,7 @@ Configuración Speech
 							</tr>
                         </thead>
                         <tbody>
-                            {% for x in speech_list %}
+                            {% for x in filter.qs %}
                                 <tr>
                                     <td>{{x.name}}</td>
                                     <td>{{x.text|slice:":20"}}...</td>
