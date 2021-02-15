@@ -99,11 +99,7 @@ class DashboardAereoView(ListView):
 			else:
 				
 				driver = webdriver.Remote(
-<<<<<<< HEAD
-   					command_executor='http://172.31.29.22:4444/wd/hub',
-=======
    					command_executor='http://172.31.29.22:4445/wd/hub',
->>>>>>> 68aeb27cd7bd5dcbfd84d6444d0e174b5947a237
    					desired_capabilities=DesiredCapabilities.CHROME)
 				
 			driver.get("http://web.whatsapp.com")
