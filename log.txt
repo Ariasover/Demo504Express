@@ -1,0 +1,122 @@
+An exceptional thing happed - Message: session not created
+from disconnected: received Inspector.detached event
+  (Session info: chrome=88.0.4324.146)
+Build info: version: '3.141.59', revision: 'e82be7d358', time: '2018-11-14T08:25:53'
+System info: host: 'EC2AMAZ-3A75H1E', ip: '172.31.29.22', os.name: 'Windows Server 2019', os.arch: 'x86', os.version: '10.0', java.version: '1.8.0_281'
+Driver info: driver.version: unknown
+remote stacktrace: Backtrace:
+	GetHandleVerifier [0x003D8A43+483]
+	GetHandleVerifier [0x003D8A21+449]
+	GetHandleVerifier [0x007813C8+3836776]
+	GetHandleVerifier [0x007763A4+3791684]
+	GetHandleVerifier [0x007760B8+3790936]
+	GetHandleVerifier [0x0077575D+3788541]
+	GetHandleVerifier [0x00774AD7+3785335]
+	GetHandleVerifier [0x00774EC6+3786342]
+	GetHandleVerifier [0x007747F5+3784597]
+	GetHandleVerifier [0x0077A4B0+3808336]
+	GetHandleVerifier [0x007747B1+3784529]
+	GetHandleVerifier [0x00775542+3788002]
+	GetHandleVerifier [0x00774AD7+3785335]
+	GetHandleVerifier [0x00774EC6+3786342]
+	GetHandleVerifier [0x007747F5+3784597]
+	GetHandleVerifier [0x007796E5+3804805]
+	GetHandleVerifier [0x007747B1+3784529]
+	GetHandleVerifier [0x00775542+3788002]
+	GetHandleVerifier [0x00774AD7+3785335]
+	GetHandleVerifier [0x00774EC6+3786342]
+	GetHandleVerifier [0x007747F5+3784597]
+	GetHandleVerifier [0x00770FD6+3770230]
+	GetHandleVerifier [0x007747B1+3784529]
+	GetHandleVerifier [0x007745D3+3784051]
+	GetHandleVerifier [0x007743C7+3783527]
+	GetHandleVerifier [0x00782600+3841440]
+	GetHandleVerifier [0x007BD55C+4082940]
+	GetHandleVerifier [0x007BC60C+4079020]
+	GetHandleVerifier [0x007B938B+4066091]
+	GetHandleVerifier [0x0079CDB4+3949908]
+	GetHandleVerifier [0x0079DC6E+3953678]
+	GetHandleVerifier [0x0079DBF9+3953561]
+	Ordinal0 [0x003A6A8C+92812]
+	Ordinal0 [0x003A0572+66930]
+	Ordinal0 [0x003A0142+65858]
+	GetHandleVerifier [0x006A47B8+2932568]
+	GetHandleVerifier [0x004E12EE+1084046]
+	GetHandleVerifier [0x00498B3D+787165]
+	GetHandleVerifier [0x0049855B+785659]
+	GetHandleVerifier [0x00498471+785425]
+	GetHandleVerifier [0x004CB7B3+995155]
+	BaseThreadInitThunk [0x75F40419+25]
+	RtlGetAppContainerNamedObjectPath [0x76F774ED+237]
+	RtlGetAppContainerNamedObjectPath [0x76F774BD+189]
+
+Stacktrace:
+    at sun.reflect.NativeConstructorAccessorImpl.newInstance0 (None:-2)
+    at sun.reflect.NativeConstructorAccessorImpl.newInstance (None:-1)
+    at sun.reflect.DelegatingConstructorAccessorImpl.newInstance (None:-1)
+    at java.lang.reflect.Constructor.newInstance (None:-1)
+    at org.openqa.selenium.remote.W3CHandshakeResponse.lambda$errorHandler$0 (W3CHandshakeResponse.java:62)
+    at org.openqa.selenium.remote.HandshakeResponse.lambda$getResponseFunction$0 (HandshakeResponse.java:30)
+    at org.openqa.selenium.remote.ProtocolHandshake.lambda$createSession$0 (ProtocolHandshake.java:126)
+    at java.util.stream.ReferencePipeline$3$1.accept (None:-1)
+    at java.util.Spliterators$ArraySpliterator.tryAdvance (None:-1)
+    at java.util.stream.ReferencePipeline.forEachWithCancel (None:-1)
+    at java.util.stream.AbstractPipeline.copyIntoWithCancel (None:-1)
+    at java.util.stream.AbstractPipeline.copyInto (None:-1)
+    at java.util.stream.AbstractPipeline.wrapAndCopyInto (None:-1)
+    at java.util.stream.FindOps$FindOp.evaluateSequential (None:-1)
+    at java.util.stream.AbstractPipeline.evaluate (None:-1)
+    at java.util.stream.ReferencePipeline.findFirst (None:-1)
+    at org.openqa.selenium.remote.ProtocolHandshake.createSession (ProtocolHandshake.java:128)
+    at org.openqa.selenium.remote.ProtocolHandshake.createSession (ProtocolHandshake.java:74)
+    at org.openqa.selenium.grid.session.remote.RemoteSession$Factory.performHandshake (RemoteSession.java:147)
+    at org.openqa.selenium.grid.session.remote.ServicedSession$Factory.apply (ServicedSession.java:161)
+    at org.openqa.selenium.remote.server.ActiveSessionFactory.lambda$apply$12 (ActiveSessionFactory.java:180)
+    at java.util.stream.ReferencePipeline$3$1.accept (None:-1)
+    at java.util.stream.ReferencePipeline$11$1.accept (None:-1)
+    at java.util.stream.ReferencePipeline$2$1.accept (None:-1)
+    at java.util.Spliterators$ArraySpliterator.tryAdvance (None:-1)
+    at java.util.stream.ReferencePipeline.forEachWithCancel (None:-1)
+    at java.util.stream.AbstractPipeline.copyIntoWithCancel (None:-1)
+    at java.util.stream.AbstractPipeline.copyInto (None:-1)
+    at java.util.stream.AbstractPipeline.wrapAndCopyInto (None:-1)
+    at java.util.stream.FindOps$FindOp.evaluateSequential (None:-1)
+    at java.util.stream.AbstractPipeline.evaluate (None:-1)
+    at java.util.stream.ReferencePipeline.findFirst (None:-1)
+    at org.openqa.selenium.remote.server.ActiveSessionFactory.apply (ActiveSessionFactory.java:183)
+    at org.openqa.selenium.remote.server.NewSessionPipeline.lambda$null$2 (NewSessionPipeline.java:66)
+    at java.util.stream.ReferencePipeline$3$1.accept (None:-1)
+    at java.util.stream.ReferencePipeline$2$1.accept (None:-1)
+    at java.util.Collections$2.tryAdvance (None:-1)
+    at java.util.stream.ReferencePipeline.forEachWithCancel (None:-1)
+    at java.util.stream.AbstractPipeline.copyIntoWithCancel (None:-1)
+    at java.util.stream.AbstractPipeline.copyInto (None:-1)
+    at java.util.stream.AbstractPipeline.wrapAndCopyInto (None:-1)
+    at java.util.stream.FindOps$FindOp.evaluateSequential (None:-1)
+    at java.util.stream.AbstractPipeline.evaluate (None:-1)
+    at java.util.stream.ReferencePipeline.findFirst (None:-1)
+    at org.openqa.selenium.remote.server.NewSessionPipeline.lambda$createNewSession$3 (NewSessionPipeline.java:69)
+    at java.util.stream.ReferencePipeline$3$1.accept (None:-1)
+    at java.util.stream.ReferencePipeline$3$1.accept (None:-1)
+    at java.util.stream.ReferencePipeline$3$1.accept (None:-1)
+    at java.util.stream.DistinctOps$1$2.accept (None:-1)
+    at java.util.stream.ReferencePipeline$2$1.accept (None:-1)
+    at java.util.stream.ReferencePipeline$3$1.accept (None:-1)
+    at java.util.stream.ReferencePipeline$2$1.accept (None:-1)
+    at java.util.stream.Streams$StreamBuilderImpl.tryAdvance (None:-1)
+    at java.util.stream.Streams$ConcatSpliterator.tryAdvance (None:-1)
+    at java.util.stream.ReferencePipeline.forEachWithCancel (None:-1)
+    at java.util.stream.AbstractPipeline.copyIntoWithCancel (None:-1)
+    at java.util.stream.AbstractPipeline.copyInto (None:-1)
+    at java.util.stream.AbstractPipeline.wrapAndCopyInto (None:-1)
+    at java.util.stream.FindOps$FindOp.evaluateSequential (None:-1)
+    at java.util.stream.AbstractPipeline.evaluate (None:-1)
+    at java.util.stream.ReferencePipeline.findFirst (None:-1)
+    at org.openqa.selenium.remote.server.NewSessionPipeline.createNewSession (NewSessionPipeline.java:72)
+    at org.openqa.selenium.remote.server.commandhandler.BeginSession.execute (BeginSession.java:65)
+    at org.openqa.selenium.remote.server.WebDriverServlet.lambda$handle$0 (WebDriverServlet.java:235)
+    at java.util.concurrent.Executors$RunnableAdapter.call (None:-1)
+    at java.util.concurrent.FutureTask.run (None:-1)
+    at java.util.concurrent.ThreadPoolExecutor.runWorker (None:-1)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run (None:-1)
+    at java.lang.Thread.run (None:-1)
