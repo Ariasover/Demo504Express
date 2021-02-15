@@ -1,9 +1,19 @@
+<form method="get">
 <div class="row m-b-sm m-t-sm">
     <div class="col-md-12">
         <div class="input-group">
-            <input type="text" placeholder="Search" class="input-sm form-control"> 
+            {% for field in filter.form %}
+                {{ field.errors }}
+                {{ field }}
+                {% if field.help_text %}
+                <p class="help">{{ field.help_text|safe }}</p>
+                {% endif %}
+            {% endfor %}
+            {% comment %} <input type="text" placeholder="Search" class="input-sm form-control">  {% endcomment %}
             <span class="input-group-btn">
-            <button type="button" class="btn btn-sm btn-primary"> Buscar</button> </span>
+                <button type="button" class="btn btn-sm btn-primary"> Buscar</button> 
+            </span>
         </div>
     </div>
 </div>
+</form>

@@ -32,6 +32,8 @@ INSTALLED_APPS = [
     'apps.speech',
 
     # External apps
+    'django_filters',
+
 ]
 
 
